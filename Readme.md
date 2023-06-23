@@ -18,28 +18,37 @@ To define your project aliases, create an object extending the `Aliases` trait c
 Aliases can be single string tasks or a sequence of strings containing multiple tasks pointing to your module's tasks and are defined using the `alias` type in your `build.sc`, eg:
 
 ```scala
-import mill._
+import mill._, scalalib._
 
 object module1 extends ScalaModule {
-  ...
+  ... // Your module here
 }
 
 object MyAliases extends Aliases {
-  def testall  = alias("__.test")
-  def compileall = alias("__.compile")
+  def testall     = alias("__.test")
+  def compileall  = alias("__.compile")
   def comptestall = alias("__.compile", "__.test")
 }
 ```
 
 ## Usage
 
-To list all the defined aliases:
+To show all the defined aliases:
 
 ```sh
 ./mill Alias/list
 ```
 
-> *Command output is TBD*
+> *Command output is TBD, but something like:*
+
+```sh
+Use './mill Alias/run [alias]'.
+Available aliases:
+testall         - Commands: (__.test)
+deps            - Commands: (mill.scalalib.Dependency/showUpdates)
+fmt             - Commands: (mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources)
+lint            - Commands: (mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources, __.fix)
+```
 
 Run an alias:
 
