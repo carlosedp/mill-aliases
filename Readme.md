@@ -20,7 +20,7 @@ Aliases can be single string tasks or a sequence of strings containing multiple 
 ```scala
 import mill._, scalalib._
 
-object module1 extends ScalaModule {
+object mymodule extends ScalaModule {
   ... // Your module here
 }
 
@@ -33,7 +33,7 @@ object MyAliases extends Aliases {
 
 ## Usage
 
-To show all the defined aliases:
+**To show all the defined aliases:**
 
 ```sh
 ./mill Alias/list
@@ -42,15 +42,18 @@ To show all the defined aliases:
 > *Command output is TBD, but something like:*
 
 ```sh
-Use './mill Alias/run [alias]'.
+Use './mill run [alias]'.
 Available aliases:
-testall         - Commands: (__.test)
-deps            - Commands: (mill.scalalib.Dependency/showUpdates)
-fmt             - Commands: (mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources)
-lint            - Commands: (mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources, __.fix)
+-----------------┰-------------------┰----------------------------------------------------------------------------------
+Alias            | Module            | Command(s)
+-----------------╀-------------------╀----------------------------------------------------------------------------------
+testcompall      |  MyAliases        |  (__.compile, __.test)
+testall          |  MyAliases        |  (__.test)
+compileall       |  MyAliases        |  (__.compile)
+-----------------┴-------------------┴----------------------------------------------------------------------------------
 ```
 
-Run an alias:
+**Run an alias:**
 
 ```sh
 ./mill Alias/run testall
@@ -63,3 +66,31 @@ In this case, the task `__.test` will be run which is executing the test task fo
 ```
 
 In this case, the task `__.compile` will be run first followed by `__.test` which will first compile all sources from all modules and then test all modules.
+
+**To show the help:**
+
+```sh
+./mill Alias/help
+```
+
+Which displays:
+
+```sh
+--------------------
+Mill Aliases Plugin
+--------------------
+The plugin allows you to define aliases for mill tasks.
+The aliases are defined in an object extending `Aliases` in the build.sc file at the root level in the following format:
+
+  object MyAliases extends Aliases {
+    def testall     = alias("__.test")
+    def compileall  = alias("__.compile")
+    def testcompall = alias("__.compile", "__.test")
+  }
+
+Aliases can be defines for one or multiple tasks which will be run in sequence.
+The aliases can be run with './mill Alias/run [alias]'.
+To list all aliases: './mill Alias/list'
+```
+
+Aliases can also be defined on separated objects extending `Aliases` to help with build organization. If a name conflict happens for aliases on different modules, the list command will show all the aliases and it's module but when run, only the alias on the first module defined will be executed.
