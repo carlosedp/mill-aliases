@@ -12,11 +12,6 @@ private[aliases] object AliasRunner extends ExternalModule {
     ev:      eval.Evaluator,
     aliases: Seq[String],
   ) = T.command {
-    Console.out.println("Running aliases in mill 0.11...")
-    Console.out.println(aliases)
-    println("Running aliases...")
-    println(aliases)
-
     mill.main.RunScript.evaluateTasksNamed(
       ev.withFailFast(false),
       aliases,

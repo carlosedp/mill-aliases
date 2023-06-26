@@ -14,9 +14,6 @@ private[aliases] object AliasRunner extends ExternalModule {
     ev:      eval.Evaluator,
     aliases: Seq[String],
   ) = T.command {
-    // Console.out.println("Running aliases...")
-    // Console.out.println(aliases)
-
     mill.main.MainModule.evaluateTasks(
       ev,
       aliases,

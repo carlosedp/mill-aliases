@@ -4,13 +4,8 @@ import mill._
 import mill.define.ExternalModule
 import mill.eval.Evaluator
 
-// import scala.reflect.runtime.{universe => ru}
-
-import scala.collection.mutable.AbstractIterable
-
 import Discover._
 import AliasRunner._
-import java.lang.reflect.Method
 
 /**
  * Aliases module
@@ -39,6 +34,9 @@ private case class Alias(
 )
 
 object AliasesModule extends ExternalModule {
+
+  lazy val millDiscover: mill.define.Discover[this.type] =
+    mill.define.Discover[this.type]
 
   /**
    * List all aliases
@@ -75,45 +73,41 @@ object AliasesModule extends ExternalModule {
    * Run an alias
    *
    * @param ev
+   *   Evaluator
    * @param alias
+   *   Alias name
    * @return
    */
   def run(ev: Evaluator, alias: String) = T.command {
-    Console.out.println(s"Running alias $alias")
-
-    val tasks = Seq("__.test") // for testing
-    println(tasks)
-
-    val runTasks = tasks.flatMap(x => Seq(x, "+")).flatMap(_.split("\\s+")).init
-    println(runTasks)
-
-    aliasRunner(
-      ev,
-      runTasks,
-    )
+    // Get the existing aliases
+    val aliases = getAllAliases(ev)
 
     // Check if the alias exists and get it's tasks
-    // if (aliases.contains(alias)) {
-
-    //   val tasks = Seq("__.test") // for testing
-    //   println(tasks)
-
-    //   val runTasks = tasks.flatMap(x => Seq(x, "+")).flatMap(_.split("\\s+")).init
-    //   println(runTasks)
-
-    //   aliasRunner(
-    //     ev,
-    //     runTasks,
-    //   )
-    // } else {
-    //   help(ev)
-    //   sys.exit(1)
-    // }
+    aliases.map(_.name).contains(alias) match {
+      case true =>
+        val tasks    = aliases.filter(_.name == alias).head.tasks
+        val runTasks = tasks.flatMap(x => Seq(x, "+")).flatMap(_.split("\\s+")).init
+        Console.out.println(s"Running alias $alias")
+        aliasRunner(
+          ev,
+          runTasks,
+        )
+      case false =>
+        Console.err.println(s"Alias '$alias' not found.")
+        Console.err.println(s"")
+        printHelp()
+        sys.exit(1)
+    }
   }
-  def help(ev: Evaluator) = T.command {
+
+  def help() = T.command {
     Console.err.println("--------------------")
     Console.err.println("Mill Aliases Plugin")
     Console.err.println("--------------------")
+    printHelp()
+  }
+
+  private def printHelp() = {
     Console.err.println("The plugin allows you to define aliases for mill tasks.")
     Console.err.println(
       "The aliases are defined in an object extending `Aliases` in the build.sc file at the root level in the following format:"
@@ -129,9 +123,6 @@ object AliasesModule extends ExternalModule {
     Console.err.println("The aliases can be run with './mill Alias/run [alias]'.")
     Console.err.println("To list all aliases: './mill Alias/list'")
   }
-
-  lazy val millDiscover: mill.define.Discover[this.type] =
-    mill.define.Discover[this.type]
 
   private def aliasModules(ev: Evaluator): Seq[Module with Aliases] =
     ev.rootModule.millInternal.modules.collect { case m: Aliases => m }
