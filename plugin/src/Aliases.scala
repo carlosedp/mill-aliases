@@ -6,6 +6,11 @@ import mill.eval.Evaluator
 
 import Discover._
 import AliasRunner._
+import mill.api.Result.Success
+import mill.api.Result.Failure
+import mill.api.Result.Aborted
+import mill.api.Result
+import mill.api.Result.Skipped
 
 /**
  * Aliases module
@@ -18,7 +23,7 @@ trait Aliases extends Module {
 }
 
 /**
- * Alias module
+ * Alias object
  *
  * @param name
  *   Alias name
@@ -33,6 +38,11 @@ private case class Alias(
   tasks:  Seq[String],
 )
 
+/**
+ * Aliases module
+ *
+ * This module is used to list and run aliases
+ */
 object AliasesModule extends ExternalModule {
 
   lazy val millDiscover: mill.define.Discover[this.type] =
@@ -49,21 +59,21 @@ object AliasesModule extends ExternalModule {
     Console.out.println("Available aliases:")
 
     // Print all aliases to the console
-    val aliases = getAllAliases(ev)
     Console.out.println(
-      "-----------------┰-------------------┰----------------------------------------------------------------------------------"
+      "┌─────────────────┬─────────────────┬───────────────────────────────────────────────────────────────────────────────────"
     )
-    Console.out.println("Alias            | Module            | Command(s) ")
+    Console.out.println("| Alias           | Module          | Command(s) ")
     Console.out.println(
-      "-----------------╀-------------------╀----------------------------------------------------------------------------------"
+      "├─────────────────┼─────────────────┼───────────────────────────────────────────────────────────────────────────────────"
     )
-    aliases.foreach(x =>
+
+    getAllAliases(ev).foreach(x =>
       Console.out.println(
-        s"${x.name.padTo(15, ' ')}  |  ${x.module.toString.padTo(15, ' ')}  |  (${x.tasks.mkString(", ")})"
+        s"| ${x.name.padTo(15, ' ')} | ${x.module.toString.padTo(15, ' ')} | (${x.tasks.mkString(", ")})"
       )
     )
     Console.out.println(
-      "-----------------┴-------------------┴----------------------------------------------------------------------------------"
+      "└─────────────────┴─────────────────┴───────────────────────────────────────────────────────────────────────────────────"
     )
     Console.out.println("")
 
@@ -78,25 +88,28 @@ object AliasesModule extends ExternalModule {
    *   Alias name
    * @return
    */
-  def run(ev: Evaluator, alias: String) = T.command {
-    // Get the existing aliases
-    val aliases = getAllAliases(ev)
-
-    // Check if the alias exists and get it's tasks
-    aliases.map(_.name).contains(alias) match {
-      case true =>
-        val tasks    = aliases.filter(_.name == alias).head.tasks
-        val runTasks = tasks.flatMap(x => Seq(x, "+")).flatMap(_.split("\\s+")).init
-        Console.out.println(s"Running alias $alias")
+  def run(ev: Evaluator, aliasName: String) = T.command {
+    findAliasByName(aliasName, getAllAliases(ev)) match {
+      case None =>
+        Console.err.println(s"Alias '$aliasName' not found.")
+        Console.err.println(s"")
+        printHelp()
+        sys.exit(1)
+      case Some(alias) =>
+        val runTasks = alias.tasks.flatMap(x => Seq(x, "+")).flatMap(_.split("\\s+")).init
+        checkAliasTasks(ev, alias) match {
+          case Aborted | Result.Exception(_, _) | Failure(_, _) | Skipped =>
+            Console.err.println(
+              s"Error: The task defined in alias '${alias.name}' is invalid: (${alias.tasks.mkString(", ")})"
+            )
+            sys.exit(1)
+          case Success(value) => value
+        }
+        Console.out.println(s"Running alias $aliasName")
         aliasRunner(
           ev,
           runTasks,
         )
-      case false =>
-        Console.err.println(s"Alias '$alias' not found.")
-        Console.err.println(s"")
-        printHelp()
-        sys.exit(1)
     }
   }
 
@@ -107,6 +120,11 @@ object AliasesModule extends ExternalModule {
     printHelp()
   }
 
+  // --------------------------------------------------------------------------------------------------------------------
+
+  /**
+   * Prints help message to the console
+   */
   private def printHelp() = {
     Console.err.println("The plugin allows you to define aliases for mill tasks.")
     Console.err.println(
@@ -124,11 +142,25 @@ object AliasesModule extends ExternalModule {
     Console.err.println("To list all aliases: './mill Alias/list'")
   }
 
+  /**
+   * Get all modules that extend [[Aliases]] in the project
+   *
+   * @param ev
+   *   Evaluator
+   * @return
+   *   A `Seq` of [[Aliases]] modules
+   */
   private def aliasModules(ev: Evaluator): Seq[Module with Aliases] =
     ev.rootModule.millInternal.modules.collect { case m: Aliases => m }
 
+  /**
+   * Get all aliases in the project module
+   *
+   * @param module
+   * @return
+   *   A `Seq` of aliases
+   */
   private def aliasMethods(module: Module): Seq[String] =
-    // modules.flatMap(_.getClass().getMethods())
     module
       .getClass()
       .getMethods()
@@ -157,9 +189,25 @@ object AliasesModule extends ExternalModule {
         ).contains(_)
       ).toSeq
 
+  /**
+   * Get all commands for an alias in a specific module
+   *
+   * @param module
+   * @param alias
+   * @return
+   *   A `Seq` of tasks
+   */
   private def aliasCommands(module: Module, alias: String): Seq[String] =
     module.getClass().getDeclaredMethod(alias).invoke(module).asInstanceOf[Seq[String]]
 
+  /**
+   * Get all aliases in the project
+   *
+   * @param ev
+   *   Evaluator
+   * @return
+   *   A `Seq` of [[Aliases]]
+   */
   private def getAllAliases(ev: Evaluator): Seq[Alias] =
     aliasModules(ev).flatMap { module =>
       aliasMethods(module).map { alias =>
@@ -171,4 +219,29 @@ object AliasesModule extends ExternalModule {
       }
     }
 
+  /**
+   * Find an alias by name
+   *
+   * @param name
+   *   Alias name
+   * @param aliases
+   *   A `Seq` of `[[Alias]]`es
+   * @return
+   */
+  private def findAliasByName(name: String, aliases: Seq[Alias]): Option[Alias] =
+    aliases.find(_.name == name)
+
+  /**
+   * Check if any task in alias is invalid
+   *
+   * @param ev
+   *   Evaluator
+   * @param alias
+   *   Alias to check
+   * @return
+   */
+  private def checkAliasTasks(ev: Evaluator, alias: Alias) = {
+    val filteredTasks = alias.tasks.flatMap(_.split("\\s+"))
+    Utils.taskResolver(ev, filteredTasks)
+  }
 }

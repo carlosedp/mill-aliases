@@ -37,18 +37,19 @@ object MyAliases extends Aliases {
 ./mill Alias/list
 ```
 
-> *Command output is TBD, but something like:*
+Which will show (eg.):
 
 ```sh
 Use './mill run [alias]'.
 Available aliases:
------------------┰-------------------┰----------------------------------------------------------------------------------
-Alias            | Module            | Command(s)
------------------╀-------------------╀----------------------------------------------------------------------------------
-testcompall      |  MyAliases        |  (__.compile, __.test)
-testall          |  MyAliases        |  (__.test)
-compileall       |  MyAliases        |  (__.compile)
------------------┴-------------------┴----------------------------------------------------------------------------------
+┌─────────────────┬─────────────────┬───────────────────────────────────────────────────────────────────────────────────
+| Alias           | Module          | Command(s)
+├─────────────────┼─────────────────┼───────────────────────────────────────────────────────────────────────────────────
+| compall         | MyAliases       | (__.compile)
+| comptestall     | MyAliases       | (__.compile, __.test)
+| testall         | MyAliases       | (__.test)
+| deps            | MyAliases       | (mill.scalalib.Dependency/showUpdates)
+└─────────────────┴─────────────────┴───────────────────────────────────────────────────────────────────────────────────
 ```
 
 **Run an alias:**
