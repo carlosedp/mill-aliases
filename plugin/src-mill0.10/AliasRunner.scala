@@ -1,9 +1,8 @@
 package com.carlosedp.aliases
 
+import com.carlosedp.aliases.Discover._
 import mill._
 import mill.define.ExternalModule
-
-import Discover._
 
 private[aliases] object AliasRunner extends ExternalModule {
 

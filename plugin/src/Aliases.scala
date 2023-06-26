@@ -1,16 +1,12 @@
 package com.carlosedp.aliases
 
+import com.carlosedp.aliases.AliasRunner._
+import com.carlosedp.aliases.Discover._
 import mill._
+import mill.api.Result
+import mill.api.Result.{Aborted, Failure, Skipped, Success}
 import mill.define.ExternalModule
 import mill.eval.Evaluator
-
-import Discover._
-import AliasRunner._
-import mill.api.Result.Success
-import mill.api.Result.Failure
-import mill.api.Result.Aborted
-import mill.api.Result
-import mill.api.Result.Skipped
 
 /**
  * Aliases module

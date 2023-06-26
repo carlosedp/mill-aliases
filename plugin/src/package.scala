@@ -1,10 +1,9 @@
 // Define packageless commands for easy access
 
+import com.carlosedp.aliases.Discover._
+import com.carlosedp.aliases._
 import mill.define.ExternalModule
 import mill.eval.Evaluator
-
-import com.carlosedp.aliases._
-import com.carlosedp.aliases.Discover._
 
 object Alias extends ExternalModule {
   def run(ev:  Evaluator, alias: String) = AliasesModule.run(ev, alias)

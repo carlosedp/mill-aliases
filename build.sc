@@ -1,4 +1,6 @@
 import $ivy.`io.chris-kipp::mill-ci-release::0.1.9`
+import $ivy.`com.goyeau::mill-scalafix::0.3.1`
+import com.goyeau.mill.scalafix.ScalafixModule
 
 import mill._
 import mill.scalalib._
@@ -9,7 +11,7 @@ import mill.scalalib.api.ZincWorkerUtil._
 import de.tobiasroeser.mill.vcs.version.VcsVersion
 import io.kipp.mill.ci.release._
 
-val millVersions = Seq("0.10.12", "0.11.0")
+val millVersions = Seq("0.10.12", "0.11.1")
 val scala213     = "2.13.11"
 val pluginName   = "mill-aliases"
 
@@ -17,6 +19,7 @@ object plugin extends Cross[Plugin](millVersions)
 trait Plugin  extends Cross.Module[String]
   with ScalaModule
   with Publish
+  with ScalafixModule
   with ScalafmtModule {
 
   val millVersion           = crossValue
@@ -27,7 +30,7 @@ trait Plugin  extends Cross.Module[String]
     ivy"com.lihaoyi::mill-scalalib:${millVersion}"
   )
 
-  override def scalacOptions = Seq("-deprecation", "-feature")
+  override def scalacOptions = Seq("-deprecation", "-feature", "-Xfatal-warnings")
 
   override def sources = T.sources {
     super.sources() ++ Seq(
