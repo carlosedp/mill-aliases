@@ -103,6 +103,9 @@ jobs:
   publish-release:
     needs: [test]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
     if: contains(github.ref, 'refs/tags/')
     steps:
       - name: Checkout
@@ -130,8 +133,7 @@ jobs:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
 
-      - name: Create Release for Tag
-        id: release_tag
-        uses: ncipollo/release-action@v1
+      - uses: rymndhng/release-on-push-action@master
         with:
-          makeLatest: true
+          use_github_release_notes: true
+          tag_prefix: ""

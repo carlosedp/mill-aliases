@@ -1,15 +1,16 @@
-import $ivy.`io.chris-kipp::mill-ci-release::0.1.9`
-import $ivy.`com.goyeau::mill-scalafix::0.3.1`
-import com.goyeau.mill.scalafix.ScalafixModule
-
 import mill._
 import mill.scalalib._
 import mill.scalalib.scalafmt._
 import mill.scalalib.publish._
 import mill.scalalib.api.ZincWorkerUtil._
 
-import de.tobiasroeser.mill.vcs.version.VcsVersion
+import $ivy.`com.carlosedp::mill-aliases::0.1.0`
+import com.carlosedp.aliases._
+import $ivy.`com.goyeau::mill-scalafix::0.3.1`
+import com.goyeau.mill.scalafix.ScalafixModule
+import $ivy.`io.chris-kipp::mill-ci-release::0.1.9`
 import io.kipp.mill.ci.release._
+import de.tobiasroeser.mill.vcs.version.VcsVersion
 
 val millVersions = Seq("0.10.12", "0.11.1")
 val scala213     = "2.13.11"
@@ -68,4 +69,14 @@ trait Publish extends CiReleaseModule {
     }
   }
   override def sonatypeHost = Some(SonatypeHost.s01)
+}
+
+object MyAliases extends Aliases {
+  def fmt      = alias("mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources")
+  def checkfmt = alias("mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources")
+  def lint     = alias("mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources", "__.fix")
+  def deps     = alias("mill.scalalib.Dependency/showUpdates")
+  def pub      = alias("io.kipp.mill.ci.release.ReleaseModule/publishAll")
+  def publocal = alias("__.publishLocal")
+  def testall  = alias("__.test")
 }
