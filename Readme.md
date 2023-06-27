@@ -1,5 +1,7 @@
 # mill-aliases
 
+![Maven Central](https://img.shields.io/maven-central/v/com.carlosedp/mill-aliases_mill0.11_2.13)
+
 This is a Scala [Mill](http://mill-build.com/) plugin adding the task alias capability to the build tool.
 
 ## Getting Started
@@ -7,7 +9,7 @@ This is a Scala [Mill](http://mill-build.com/) plugin adding the task alias capa
 First import the plugin into your `build.sc` using the latest published version, by adding:
 
 ```scala
-import $ivy.`com.carlosedp::mill-aliases::0.1.0`      //ReleaseVerMill
+import $ivy.`com.carlosedp::mill-aliases::0.2.0`      //ReleaseVerMill
 import com.carlosedp.aliases._
 ```
 
