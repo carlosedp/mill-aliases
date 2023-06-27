@@ -28,7 +28,8 @@ trait Plugin  extends Cross.Module[String]
   override def artifactName = s"${pluginName}_mill${scalaNativeBinaryVersion(millVersion)}"
 
   override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
-    ivy"com.lihaoyi::mill-scalalib:${millVersion}"
+    ivy"com.lihaoyi::mill-scalalib:${millVersion}",
+    ivy"org.scala-lang:scala-reflect:${scalaVersion()}",
   )
 
   override def scalacOptions = Seq("-deprecation", "-feature", "-Xfatal-warnings")

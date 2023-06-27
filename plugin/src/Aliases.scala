@@ -8,6 +8,8 @@ import mill.api.Result.{Aborted, Failure, Skipped, Success}
 import mill.define.ExternalModule
 import mill.eval.Evaluator
 
+import scala.reflect.runtime.{universe => ru}
+
 /**
  * Aliases module
  *
@@ -63,7 +65,7 @@ object AliasesModule extends ExternalModule {
       "├─────────────────┼─────────────────┼───────────────────────────────────────────────────────────────────────────────────"
     )
 
-    getAllAliases(ev).foreach(x =>
+    getAllAliases(ev).sortBy(_.name).foreach(x =>
       Console.out.println(
         s"| ${x.name.padTo(15, ' ')} | ${x.module.toString.padTo(15, ' ')} | (${x.tasks.mkString(", ")})"
       )
@@ -146,7 +148,7 @@ object AliasesModule extends ExternalModule {
    * @return
    *   A `Seq` of [[Aliases]] modules
    */
-  private def aliasModules(ev: Evaluator): Seq[Module with Aliases] =
+  private def aliasModules(ev: Evaluator): Seq[Aliases] =
     ev.rootModule.millInternal.modules.collect { case m: Aliases => m }
 
   /**
@@ -182,6 +184,7 @@ object AliasesModule extends ExternalModule {
           "mill$moduledefs$Cacher$$cacherLazyMap",
           "millOuterCtx",
           "cachedTarget",
+          "$anonfun$millSourcePath$1",
         ).contains(_)
       ).toSeq
 
