@@ -2,7 +2,7 @@
 
 ![Maven Central](https://img.shields.io/maven-central/v/com.carlosedp/mill-aliases_mill0.11_2.13)
 
-This is a Scala [Mill](http://mill-build.com/) plugin adding the task alias capability to the build tool.
+This is a Scala [Mill](http://mill-build.com/) plugin adding the task alias capability to the build tool. Supports Mill 0.10 and 0.11 series.
 
 ## Getting Started
 
