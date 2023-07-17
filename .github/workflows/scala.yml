@@ -133,7 +133,7 @@ jobs:
           PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
           PGP_SECRET: ${{ secrets.PGP_SECRET }}
 
-      - uses: rymndhng/release-on-push-action@master
-        with:
-          use_github_release_notes: true
-          tag_prefix: ""
+      # - uses: rymndhng/release-on-push-action@master
+      #   with:
+      #     use_github_release_notes: true
+      #     tag_prefix: ""

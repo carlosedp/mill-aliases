@@ -240,7 +240,7 @@ object AliasesModule extends ExternalModule {
    * @return
    */
   private def checkAliasTasks(ev: Evaluator, alias: Alias) = {
-    val filteredTasks = alias.tasks.flatMap(_.split("\\s+"))
+    val filteredTasks = alias.tasks.map(_.split("\\s+").head)
     Utils.taskResolver(ev, filteredTasks)
   }
 }
