@@ -8,6 +8,8 @@ import $ivy.`com.carlosedp::mill-aliases::0.1.0`
 import com.carlosedp.aliases._
 import $ivy.`com.goyeau::mill-scalafix::0.3.1`
 import com.goyeau.mill.scalafix.ScalafixModule
+import $ivy.`io.github.davidgregory084::mill-tpolecat::0.3.5`
+import io.github.davidgregory084.TpolecatModule
 import $ivy.`io.chris-kipp::mill-ci-release::0.1.9`
 import io.kipp.mill.ci.release._
 import de.tobiasroeser.mill.vcs.version.VcsVersion
@@ -21,7 +23,8 @@ trait Plugin  extends Cross.Module[String]
   with ScalaModule
   with Publish
   with ScalafixModule
-  with ScalafmtModule {
+  with ScalafmtModule
+  with TpolecatModule {
 
   val millVersion           = crossValue
   override def scalaVersion = scala213
