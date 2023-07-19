@@ -18,7 +18,10 @@ private[aliases] object AliasRunner extends ExternalModule {
       aliases,
       mill.resolve.SelectMode.Separated,
     ) match {
-      case Left(value)  => Result.Failure(value)
-      case Right(value) => Result.Success(value)
+      case Left(value) => Result.Failure(value)
+      case Right(value) => value._2 match {
+          case Left(value2)  => Result.Failure(value2)
+          case Right(value2) => Result.Success(value2)
+        }
     }
 }

@@ -97,7 +97,13 @@ object AliasesModule extends ExternalModule {
           case Success(_) =>
             val runTasks = alias.tasks.flatMap(x => Seq(x, "+")).flatMap(_.split("\\s+")).init
             Console.out.println(s"Running alias $aliasName")
-            aliasRunner(ev, runTasks)
+            aliasRunner(ev, runTasks) match {
+              case Success(value) =>
+                Result.Success(s"Alias $aliasName finished successfully")
+              case Result.Failure(msg, value) =>
+                Result.Failure(msg)
+              case _ => Result.Failure(s"Alias $aliasName failed with unknown error")
+            }
           case _ =>
             Result.Failure(
               s"Error: A task defined in alias '${alias.name}' is invalid: (${alias.tasks.mkString(", ")})"
