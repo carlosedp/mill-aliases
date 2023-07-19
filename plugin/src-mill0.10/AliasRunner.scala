@@ -2,7 +2,10 @@ package com.carlosedp.aliases
 
 import com.carlosedp.aliases.Discover._
 import mill._
+import mill.api.Result
+import mill.api.Result.{Aborted, Failure, Skipped, Success}
 import mill.define.ExternalModule
+import mill.util.Watched
 
 private[aliases] object AliasRunner extends ExternalModule {
 
@@ -12,11 +15,16 @@ private[aliases] object AliasRunner extends ExternalModule {
   def aliasRunner(
     ev:      eval.Evaluator,
     aliases: Seq[String],
-  ) = T.command {
+  ): Result[Watched[Unit]] =
     mill.main.MainModule.evaluateTasks(
       ev,
       aliases,
       mill.define.SelectMode.Separated,
-    )(identity)
-  }
+    )(identity) match {
+      case Aborted                                 => Result.Failure("Aborted")
+      case Result.Exception(throwable, outerStack) => Result.Exception(throwable, outerStack)
+      case Failure(msg, value)                     => Result.Failure(msg, value)
+      case Skipped                                 => Result.Skipped
+      case Success(value)                          => Result.Success(value)
+    }
 }

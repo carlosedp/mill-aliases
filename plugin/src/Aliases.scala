@@ -1,5 +1,7 @@
 package com.carlosedp.aliases
 
+import scala.reflect.runtime.{universe => ru}
+
 import com.carlosedp.aliases.AliasRunner._
 import com.carlosedp.aliases.Discover._
 import mill._
@@ -7,8 +9,6 @@ import mill.api.Result
 import mill.api.Result.{Aborted, Failure, Skipped, Success}
 import mill.define.ExternalModule
 import mill.eval.Evaluator
-
-import scala.reflect.runtime.{universe => ru}
 
 /**
  * Aliases module
@@ -52,7 +52,7 @@ object AliasesModule extends ExternalModule {
    * @param ev
    * @return
    */
-  def list(ev: Evaluator) = T.command {
+  def list(ev: Evaluator) = {
     Console.err.println("Use './mill run [alias]'.");
     Console.out.println("Available aliases:")
 
@@ -86,32 +86,26 @@ object AliasesModule extends ExternalModule {
    *   Alias name
    * @return
    */
-  def run(ev: Evaluator, aliasName: String) = T.command {
+  def run(ev: Evaluator, aliasName: String) =
     findAliasByName(aliasName, getAllAliases(ev)) match {
       case None =>
-        Console.err.println(s"Alias '$aliasName' not found.")
-        Console.err.println(s"")
         printHelp()
-        sys.exit(1)
+        Console.err.println(s"")
+        Result.Failure(s"Alias '$aliasName' not found.")
       case Some(alias) =>
         val runTasks = alias.tasks.flatMap(x => Seq(x, "+")).flatMap(_.split("\\s+")).init
         checkAliasTasks(ev, alias) match {
-          case Aborted | Result.Exception(_, _) | Failure(_, _) | Skipped =>
-            Console.err.println(
-              s"Error: The task defined in alias '${alias.name}' is invalid: (${alias.tasks.mkString(", ")})"
+          case Success(_) =>
+            Console.out.println(s"Running alias $aliasName")
+            aliasRunner(ev, runTasks)
+          case _ =>
+            Result.Failure(
+              s"Error: A task defined in alias '${alias.name}' is invalid: (${alias.tasks.mkString(", ")})"
             )
-            sys.exit(1)
-          case Success(value) => value
         }
-        Console.out.println(s"Running alias $aliasName")
-        aliasRunner(
-          ev,
-          runTasks,
-        )
     }
-  }
 
-  def help() = T.command {
+  def help() = {
     Console.err.println("--------------------")
     Console.err.println("Mill Aliases Plugin")
     Console.err.println("--------------------")
