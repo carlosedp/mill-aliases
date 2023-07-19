@@ -93,9 +93,9 @@ object AliasesModule extends ExternalModule {
         Console.err.println(s"")
         Result.Failure(s"Alias '$aliasName' not found.")
       case Some(alias) =>
-        val runTasks = alias.tasks.flatMap(x => Seq(x, "+")).flatMap(_.split("\\s+")).init
         checkAliasTasks(ev, alias) match {
           case Success(_) =>
+            val runTasks = alias.tasks.flatMap(x => Seq(x, "+")).flatMap(_.split("\\s+")).init
             Console.out.println(s"Running alias $aliasName")
             aliasRunner(ev, runTasks)
           case _ =>
@@ -118,10 +118,9 @@ object AliasesModule extends ExternalModule {
    * Prints help message to the console
    */
   private def printHelp() = {
+    // format: off
     Console.err.println("The plugin allows you to define aliases for mill tasks.")
-    Console.err.println(
-      "The aliases are defined in an object extending `Aliases` in the build.sc file at the root level in the following format:"
-    )
+    Console.err.println("The aliases are defined in an object extending `Aliases` in the build.sc file at the root level in the following format:")
     Console.err.println("""
                           |  object MyAliases extends Aliases {
                           |    def testall     = alias("__.test")
@@ -132,6 +131,7 @@ object AliasesModule extends ExternalModule {
     Console.err.println("Aliases can be defines for one or multiple tasks which will be run in sequence.")
     Console.err.println("The aliases can be run with './mill Alias/run [alias]'.")
     Console.err.println("To list all aliases: './mill Alias/list'")
+    // format: on
   }
 
   /**
