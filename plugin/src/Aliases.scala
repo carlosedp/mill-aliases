@@ -53,28 +53,20 @@ object AliasesModule extends ExternalModule {
    * @return
    */
   def list(ev: Evaluator) = {
-    Console.err.println("Use './mill run [alias]'.");
-    Console.out.println("Available aliases:")
-
-    // Print all aliases to the console
-    Console.out.println(
-      "┌─────────────────┬─────────────────┬───────────────────────────────────────────────────────────────────────────────────"
-    )
-    Console.out.println("| Alias           | Module          | Command(s) ")
-    Console.out.println(
-      "├─────────────────┼─────────────────┼───────────────────────────────────────────────────────────────────────────────────"
-    )
-
+    // format: off
+    val output = new StringBuilder()
+    output.append("Use './mill run [alias]'.\n")
+    output.append("Available aliases:\n")
+    output.append("┌─────────────────┬─────────────────┬───────────────────────────────────────────────────────────────────────────────────\n")
+    output.append("| Alias           | Module          | Command(s) \n")
+    output.append("├─────────────────┼─────────────────┼───────────────────────────────────────────────────────────────────────────────────\n")
     getAllAliases(ev).sortBy(_.name).foreach(x =>
-      Console.out.println(
-        s"| ${x.name.padTo(15, ' ')} | ${x.module.toString.padTo(15, ' ')} | (${x.tasks.mkString(", ")})"
-      )
+      output.append(s"| ${x.name.padTo(15, ' ')} | ${x.module.toString.padTo(15, ' ')} | (${x.tasks.mkString(", ")})\n")
     )
-    Console.out.println(
-      "└─────────────────┴─────────────────┴───────────────────────────────────────────────────────────────────────────────────"
-    )
-    Console.out.println("")
-
+    output.append("└─────────────────┴─────────────────┴───────────────────────────────────────────────────────────────────────────────────\n")
+    output.append("\n")
+    output
+    // format: on
   }
 
   /**
@@ -90,7 +82,6 @@ object AliasesModule extends ExternalModule {
     findAliasByName(aliasName, getAllAliases(ev)) match {
       case None =>
         printHelp()
-        Console.err.println(s"")
         Result.Failure(s"Alias '$aliasName' not found.")
       case Some(alias) =>
         checkAliasTasks(ev, alias) match {
@@ -106,10 +97,12 @@ object AliasesModule extends ExternalModule {
     }
 
   def help() = {
-    Console.err.println("--------------------")
-    Console.err.println("Mill Aliases Plugin")
-    Console.err.println("--------------------")
-    printHelp()
+    val output = new StringBuilder()
+    output.append("┌───────────────────────┐\n")
+    output.append("| Mill Aliases Plugin   |\n")
+    output.append("└───────────────────────┘\n")
+    output.append(printHelp())
+    output
   }
 
   // --------------------------------------------------------------------------------------------------------------------
@@ -118,20 +111,20 @@ object AliasesModule extends ExternalModule {
    * Prints help message to the console
    */
   private def printHelp() = {
-    // format: off
-    Console.err.println("The plugin allows you to define aliases for mill tasks.")
-    Console.err.println("The aliases are defined in an object extending `Aliases` in the build.sc file at the root level in the following format:")
-    Console.err.println("""
-                          |  object MyAliases extends Aliases {
-                          |    def testall     = alias("__.test")
-                          |    def compileall  = alias("__.compile")
-                          |    def testcompall = alias("__.compile", "__.test")
-                          |  }
-    """.stripMargin)
-    Console.err.println("Aliases can be defines for one or multiple tasks which will be run in sequence.")
-    Console.err.println("The aliases can be run with './mill Alias/run [alias]'.")
-    Console.err.println("To list all aliases: './mill Alias/list'")
-    // format: on
+    val output = new StringBuilder()
+    output.append("The plugin allows you to define aliases for mill tasks.")
+    output.append("The aliases are defined at the root level of build.sc in the following format:")
+    output.append("""
+                    |  object MyAliases extends Aliases {
+                    |    def testall     = alias("__.test")
+                    |    def compileall  = alias("__.compile")
+                    |    def testcompall = alias("__.compile", "__.test")
+                    |  }
+                    |""".stripMargin)
+    output.append("Aliases can be defined for one or multiple tasks which will be run in sequence.\n")
+    output.append("The aliases can be run with './mill Alias/run [alias]'.\n")
+    output.append("To list all aliases: './mill Alias/list'.\n")
+    output
   }
 
   /**
