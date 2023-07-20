@@ -4,7 +4,7 @@ import mill.scalalib.scalafmt._
 import mill.scalalib.publish._
 import mill.scalalib.api.ZincWorkerUtil._
 
-import $ivy.`com.carlosedp::mill-aliases::0.1.0`
+import $ivy.`com.carlosedp::mill-aliases::0.4.1`
 import com.carlosedp.aliases._
 import $ivy.`com.goyeau::mill-scalafix::0.3.1`
 import com.goyeau.mill.scalafix.ScalafixModule
@@ -35,8 +35,6 @@ trait Plugin  extends Cross.Module[String]
     ivy"org.scala-lang:scala-reflect:${scalaVersion()}",
   )
 
-  override def scalacOptions = Seq("-deprecation", "-feature", "-Xfatal-warnings")
-
   override def sources = T.sources {
     super.sources() ++ Seq(
       millSourcePath / s"src-mill${millVersion.split('.').take(2).mkString(".")}"
@@ -46,13 +44,11 @@ trait Plugin  extends Cross.Module[String]
 
 trait Publish extends CiReleaseModule {
   override def pomSettings = PomSettings(
-    description =
-      "A Mill plugin to allow the creation of aliases to common-use tasks.",
+    description = "A Mill plugin to allow the creation of aliases to common-use tasks.",
     organization = "com.carlosedp",
     url = "https://github.com/carlosedp/mill-aliases",
     licenses = Seq(License.MIT),
-    versionControl = VersionControl
-      .github(owner = "carlosedp", repo = "mill-aliases"),
+    versionControl = VersionControl.github(owner = "carlosedp", repo = "mill-aliases"),
     developers = Seq(
       Developer(
         "carlosedp",
