@@ -21,11 +21,11 @@ val pluginName   = "mill-aliases"
 
 object plugin extends Cross[Plugin](millVersions)
 trait Plugin  extends Cross.Module[String]
-  with ScalaModule
-  with Publish
-  with ScalafixModule
-  with ScalafmtModule
-  with TpolecatModule {
+    with ScalaModule
+    with Publish
+    with ScalafixModule
+    with ScalafmtModule
+    with TpolecatModule {
 
   val millVersion           = crossValue
   override def scalaVersion = scala213
@@ -38,7 +38,7 @@ trait Plugin  extends Cross.Module[String]
 
   override def sources = T.sources {
     super.sources() ++ Seq(
-      millSourcePath / s"src-mill${millVersion.split('.').take(2).mkString(".")}"
+      millSourcePath / s"src-mill${scalaNativeBinaryVersion(millVersion)}"
     ).map(PathRef(_))
   }
 }

@@ -10,8 +10,8 @@ private[aliases] object AliasRunner extends ExternalModule {
     mill.define.Discover[this.type]
 
   def aliasRunner(
-    ev:      eval.Evaluator,
-    aliases: Seq[String],
+      ev:      eval.Evaluator,
+      aliases: Seq[String],
   ) =
     mill.main.RunScript.evaluateTasksNamed(
       ev.withFailFast(false),

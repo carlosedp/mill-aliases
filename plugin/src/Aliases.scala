@@ -31,9 +31,9 @@ trait Aliases extends Module {
  *   Tasks to be executed
  */
 private case class Alias(
-  name:   String,
-  module: Module,
-  tasks:  Seq[String],
+    name:   String,
+    module: Module,
+    tasks:  Seq[String],
 )
 
 /**

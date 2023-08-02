@@ -13,8 +13,8 @@ private[aliases] object AliasRunner extends ExternalModule {
     mill.define.Discover[this.type]
 
   def aliasRunner(
-    ev:      eval.Evaluator,
-    aliases: Seq[String],
+      ev:      eval.Evaluator,
+      aliases: Seq[String],
   ): Result[Watched[Unit]] =
     mill.main.MainModule.evaluateTasks(
       ev,
