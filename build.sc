@@ -14,6 +14,8 @@ trait TpolecatModule
 import $ivy.`io.chris-kipp::mill-ci-release::0.1.9`
 import io.kipp.mill.ci.release._
 import de.tobiasroeser.mill.vcs.version.VcsVersion
+import $ivy.`de.tototec::de.tobiasroeser.mill.integrationtest::0.7.1`
+import de.tobiasroeser.mill.integrationtest._
 
 val millVersions = Seq("0.10.12", "0.11.5")
 val scala213     = "2.13.12"
@@ -72,12 +74,24 @@ trait Publish extends CiReleaseModule {
   override def sonatypeHost = Some(SonatypeHost.s01)
 }
 
+object itest extends Cross[ItestCoss](millVersions)
+trait ItestCoss extends Cross.Module[String] with MillIntegrationTestModule {
+  def millTestVersion  = crossValue
+  def pluginsUnderTest = Seq(plugin(crossValue))
+
+  override def testInvocations: Target[Seq[(PathRef, Seq[TestInvocation.Targets])]] = Seq(
+    PathRef(millSourcePath / "alias-plugin") -> Seq(
+      TestInvocation.Targets(Seq("verify"))
+    )
+  )
+}
+
 object MyAliases extends Aliases {
   def fmt      = alias("mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources")
   def checkfmt = alias("mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources")
   def lint     = alias("mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources", "__.fix")
   def deps     = alias("mill.scalalib.Dependency/showUpdates")
   def pub      = alias("io.kipp.mill.ci.release.ReleaseModule/publishAll")
-  def publocal = alias("__.publishLocal")
-  def testall  = alias("__.test")
+  def publocal = alias("plugin.__.publishLocal")
+  def testall  = alias("itest.__.test")
 }
