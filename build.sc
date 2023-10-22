@@ -8,14 +8,11 @@ import $ivy.`com.carlosedp::mill-aliases::0.4.1`
 import com.carlosedp.aliases._
 import $ivy.`com.goyeau::mill-scalafix::0.3.1`
 import com.goyeau.mill.scalafix.ScalafixModule
-// import $ivy.`io.github.davidgregory084::mill-tpolecat::0.3.5`
-// import io.github.davidgregory084.TpolecatModule
-trait TpolecatModule
 import $ivy.`io.chris-kipp::mill-ci-release::0.1.9`
 import io.kipp.mill.ci.release._
 import de.tobiasroeser.mill.vcs.version.VcsVersion
 
-val millVersions = Seq("0.10.12", "0.11.5")
+val millVersions = Seq("0.10.12", "0.11.0") // scala-steward:off
 val scala213     = "2.13.12"
 val pluginName   = "mill-aliases"
 
@@ -24,19 +21,18 @@ trait Plugin  extends Cross.Module[String]
     with ScalaModule
     with Publish
     with ScalafixModule
-    with ScalafmtModule
-    with TpolecatModule {
+    with ScalafmtModule {
 
-  val millVersion           = crossValue
-  override def scalaVersion = scala213
-  override def artifactName = s"${pluginName}_mill${scalaNativeBinaryVersion(millVersion)}"
+  val millVersion  = crossValue
+  def scalaVersion = scala213
+  def artifactName = s"${pluginName}_mill${scalaNativeBinaryVersion(millVersion)}"
 
-  override def compileIvyDeps = super.compileIvyDeps() ++ Agg(
+  def compileIvyDeps = super.compileIvyDeps() ++ Agg(
     ivy"com.lihaoyi::mill-scalalib:${millVersion}",
     ivy"org.scala-lang:scala-reflect:${scalaVersion()}",
   )
 
-  override def sources = T.sources {
+  def sources = T.sources {
     super.sources() ++ Seq(
       millSourcePath / s"src-mill${scalaNativeBinaryVersion(millVersion)}"
     ).map(PathRef(_))
@@ -44,7 +40,7 @@ trait Plugin  extends Cross.Module[String]
 }
 
 trait Publish extends CiReleaseModule {
-  override def pomSettings = PomSettings(
+  def pomSettings = PomSettings(
     description = "A Mill plugin to allow the creation of aliases to common-use tasks.",
     organization = "com.carlosedp",
     url = "https://github.com/carlosedp/mill-aliases",
@@ -69,7 +65,7 @@ trait Publish extends CiReleaseModule {
       s"${v(0)}.${(v(1).toInt) + 1}-SNAPSHOT"
     }
   }
-  override def sonatypeHost = Some(SonatypeHost.s01)
+  def sonatypeHost = Some(SonatypeHost.s01)
 }
 
 object MyAliases extends Aliases {
