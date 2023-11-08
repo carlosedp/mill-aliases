@@ -23,57 +23,57 @@ trait Plugin  extends Cross.Module[String]
     with ScalafixModule
     with ScalafmtModule {
 
-  val millVersion  = crossValue
-  def scalaVersion = scala213
-  def artifactName = s"${pluginName}_mill${scalaNativeBinaryVersion(millVersion)}"
+    val millVersion  = crossValue
+    def scalaVersion = scala213
+    def artifactName = s"${pluginName}_mill${scalaNativeBinaryVersion(millVersion)}"
 
-  def compileIvyDeps = super.compileIvyDeps() ++ Agg(
-    ivy"com.lihaoyi::mill-scalalib:${millVersion}",
-    ivy"org.scala-lang:scala-reflect:${scalaVersion()}",
-  )
+    def compileIvyDeps = super.compileIvyDeps() ++ Agg(
+        ivy"com.lihaoyi::mill-scalalib:${millVersion}",
+        ivy"org.scala-lang:scala-reflect:${scalaVersion()}",
+    )
 
-  def sources = T.sources {
-    super.sources() ++ Seq(
-      millSourcePath / s"src-mill${scalaNativeBinaryVersion(millVersion)}"
-    ).map(PathRef(_))
-  }
+    def sources = T.sources {
+        super.sources() ++ Seq(
+            millSourcePath / s"src-mill${scalaNativeBinaryVersion(millVersion)}"
+        ).map(PathRef(_))
+    }
 }
 
 trait Publish extends CiReleaseModule {
-  def pomSettings = PomSettings(
-    description = "A Mill plugin to allow the creation of aliases to common-use tasks.",
-    organization = "com.carlosedp",
-    url = "https://github.com/carlosedp/mill-aliases",
-    licenses = Seq(License.MIT),
-    versionControl = VersionControl.github(owner = "carlosedp", repo = "mill-aliases"),
-    developers = Seq(
-      Developer(
-        "carlosedp",
-        "Carlos Eduardo de Paula",
-        "https://github.com/carlosedp",
-      )
-    ),
-  )
-  override def publishVersion: T[String] = T {
-    val isTag = T.ctx().env.get("GITHUB_REF").exists(_.startsWith("refs/tags"))
-    val state = VcsVersion.vcsState()
-    if (state.commitsSinceLastTag == 0 && isTag) {
-      state.stripV(state.lastTag.get)
-    } else {
-      val v = if (state.lastTag.isEmpty) { Array("0", "0", "0") }
-      else { state.stripV(state.lastTag.get).split('.') }
-      s"${v(0)}.${(v(1).toInt) + 1}-SNAPSHOT"
+    def pomSettings = PomSettings(
+        description = "A Mill plugin to allow the creation of aliases to common-use tasks.",
+        organization = "com.carlosedp",
+        url = "https://github.com/carlosedp/mill-aliases",
+        licenses = Seq(License.MIT),
+        versionControl = VersionControl.github(owner = "carlosedp", repo = "mill-aliases"),
+        developers = Seq(
+            Developer(
+                "carlosedp",
+                "Carlos Eduardo de Paula",
+                "https://github.com/carlosedp",
+            )
+        ),
+    )
+    override def publishVersion: T[String] = T {
+        val isTag = T.ctx().env.get("GITHUB_REF").exists(_.startsWith("refs/tags"))
+        val state = VcsVersion.vcsState()
+        if (state.commitsSinceLastTag == 0 && isTag) {
+            state.stripV(state.lastTag.get)
+        } else {
+            val v = if (state.lastTag.isEmpty) { Array("0", "0", "0") }
+            else { state.stripV(state.lastTag.get).split('.') }
+            s"${v(0)}.${(v(1).toInt) + 1}-SNAPSHOT"
+        }
     }
-  }
-  def sonatypeHost = Some(SonatypeHost.s01)
+    def sonatypeHost = Some(SonatypeHost.s01)
 }
 
 object MyAliases extends Aliases {
-  def fmt      = alias("mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources")
-  def checkfmt = alias("mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources")
-  def lint     = alias("mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources", "__.fix")
-  def deps     = alias("mill.scalalib.Dependency/showUpdates")
-  def pub      = alias("io.kipp.mill.ci.release.ReleaseModule/publishAll")
-  def publocal = alias("__.publishLocal")
-  def testall  = alias("__.test")
+    def fmt      = alias("mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources")
+    def checkfmt = alias("mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources")
+    def lint     = alias("mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources", "__.fix")
+    def deps     = alias("mill.scalalib.Dependency/showUpdates")
+    def pub      = alias("io.kipp.mill.ci.release.ReleaseModule/publishAll")
+    def publocal = alias("__.publishLocal")
+    def testall  = alias("__.test")
 }
