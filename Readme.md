@@ -31,6 +31,8 @@ object MyAliases extends Aliases {
 }
 ```
 
+If you use Zsh as shell and/or P10k as a theme, check my Zsh Mill completions plugin at https://github.com/carlosedp/mill-zsh-completions. It supports getting Mill tasks and aliases.
+
 ## Usage
 
 **To show all the defined aliases:**
