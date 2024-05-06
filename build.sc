@@ -13,7 +13,7 @@ import io.kipp.mill.ci.release._
 import de.tobiasroeser.mill.vcs.version.VcsVersion
 
 val millVersions = Seq("0.10.12", "0.11.0") // scala-steward:off
-val scala213     = "2.13.13"
+val scala213     = "2.13.14"
 val pluginName   = "mill-aliases"
 
 object plugin extends Cross[Plugin](millVersions)
