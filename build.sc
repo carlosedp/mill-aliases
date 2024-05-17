@@ -6,7 +6,7 @@ import mill.scalalib.api.ZincWorkerUtil._
 
 import $ivy.`com.carlosedp::mill-aliases::0.4.1`
 import com.carlosedp.aliases._
-import $ivy.`com.goyeau::mill-scalafix::0.3.2`
+import $ivy.`com.goyeau::mill-scalafix::0.4.0`
 import com.goyeau.mill.scalafix.ScalafixModule
 import $ivy.`io.chris-kipp::mill-ci-release::0.1.10`
 import io.kipp.mill.ci.release._
