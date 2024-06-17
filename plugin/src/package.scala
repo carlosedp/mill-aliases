@@ -11,7 +11,7 @@ object Alias extends ExternalModule {
         AliasesModule.run(ev, alias)
     }
     def list(ev: Evaluator) = T.command(AliasesModule.list(ev))
-    def help() = T.command(AliasesModule.help())
+    def help()              = T.command(AliasesModule.help())
 
     lazy val millDiscover: mill.define.Discover[this.type] =
         mill.define.Discover[this.type]
