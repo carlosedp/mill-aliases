@@ -1,5 +1,3 @@
-package build
-
 import mill._
 import mill.scalalib._
 import mill.scalalib.scalafmt._
@@ -8,21 +6,17 @@ import mill.scalalib.api.ZincWorkerUtil._
 
 import $ivy.`com.carlosedp::mill-aliases::0.5.0`
 import com.carlosedp.aliases._
-import $ivy.`com.goyeau::mill-scalafix::0.4.1`
+import $ivy.`com.goyeau::mill-scalafix::0.4.2`
 import com.goyeau.mill.scalafix.ScalafixModule
 import $ivy.`io.chris-kipp::mill-ci-release::0.1.10`
 import io.kipp.mill.ci.release._
 import de.tobiasroeser.mill.vcs.version.VcsVersion
 
-val millVersionMap = Map(
-    "0.10.12" -> "0.10.12",
-    "0.11.0"  -> "0.11.0",
-    "0.12.0-RC1" -> "0.11.0"
-)
-val scala213     = "2.13.14"
+val millVersions = Seq("0.10.12", "0.11.0") // scala-steward:off
+val scala213     = "2.13.15"
 val pluginName   = "mill-aliases"
 
-object plugin extends Cross[Plugin](millVersionMap.keys.toSeq)
+object plugin extends Cross[Plugin](millVersions)
 trait Plugin  extends Cross.Module[String]
     with ScalaModule
     with Publish
@@ -40,7 +34,7 @@ trait Plugin  extends Cross.Module[String]
 
     def sources = T.sources {
         super.sources() ++ Seq(
-            millSourcePath / s"src-mill${scalaNativeBinaryVersion(millVersionMap(millVersion))}"
+            millSourcePath / s"src-mill${scalaNativeBinaryVersion(millVersion)}"
         ).map(PathRef(_))
     }
 }
