@@ -12,11 +12,13 @@ import $ivy.`io.chris-kipp::mill-ci-release::0.1.10`
 import io.kipp.mill.ci.release._
 import de.tobiasroeser.mill.vcs.version.VcsVersion
 
-val millVersions = Seq("0.10.12", "0.11.0") // scala-steward:off
-val scala213     = "2.13.15"
-val pluginName   = "mill-aliases"
+object versions {
+    val pluginName   = "mill-aliases"
+    val millVersions = Seq("0.10.12", "0.11.0") // scala-steward:off
+    val scala213     = "2.13.15"
+}
 
-object plugin extends Cross[Plugin](millVersions)
+object plugin extends Cross[Plugin](versions.millVersions)
 trait Plugin  extends Cross.Module[String]
     with ScalaModule
     with Publish
@@ -24,8 +26,8 @@ trait Plugin  extends Cross.Module[String]
     with ScalafmtModule {
 
     val millVersion  = crossValue
-    def scalaVersion = scala213
-    def artifactName = s"${pluginName}_mill${scalaNativeBinaryVersion(millVersion)}"
+    def scalaVersion = versions.scala213
+    def artifactName = s"${versions.pluginName}_mill${scalaNativeBinaryVersion(millVersion)}"
 
     def compileIvyDeps = super.compileIvyDeps() ++ Agg(
         ivy"com.lihaoyi::mill-scalalib:${millVersion}",

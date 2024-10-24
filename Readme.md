@@ -6,16 +6,16 @@ This is a Scala [Mill](http://mill-build.com/) plugin adding the task alias capa
 
 ## Getting Started
 
-First import the plugin into your `build.sc` using the latest published version, by adding:
+First import the plugin into your `build.sc` / `build.mill` using the latest published version, by adding:
 
 ```scala
 import $ivy.`com.carlosedp::mill-aliases::0.5.0`  //ReleaseVerMill
 import com.carlosedp.aliases._
 ```
 
-To define your project aliases, create an object extending the `Aliases` trait containing one method per required alias. Aliases are global to your project (whether single or multi-module) and are defined at the root level of your `build.sc` file.
+To define your project aliases, create an object extending the `Aliases` trait containing one method per required alias. Aliases are global to your project (whether single or multi-module) and are defined at the root level of your build file.
 
-Aliases can be single string tasks or a sequence of strings containing multiple tasks pointing to your module's tasks and are defined using the `alias` type in your `build.sc`, eg:
+Aliases can be single string tasks or a sequence of strings containing multiple tasks pointing to your module's tasks and are defined using the `alias` type in your `build.sc` / `build.mill`, eg:
 
 ```scala
 import mill._, scalalib._
@@ -31,7 +31,7 @@ object MyAliases extends Aliases {
 }
 ```
 
-If you use Zsh as shell and/or P10k as a theme, check my Zsh Mill completions plugin at https://github.com/carlosedp/mill-zsh-completions. It supports getting Mill tasks and aliases.
+If you use Zsh as shell and/or P10k as a theme, check my Zsh Mill completions plugin at <https://github.com/carlosedp/mill-zsh-completions>. It supports getting Mill tasks and aliases.
 
 ## Usage
 
