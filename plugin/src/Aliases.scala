@@ -1,12 +1,8 @@
 package com.carlosedp.aliases
 
-import scala.reflect.runtime.{universe => ru}
-
 import com.carlosedp.aliases.AliasRunner._
-import com.carlosedp.aliases.Discover._
 import mill._
 import mill.api.Result
-import mill.api.Result.{Aborted, Failure, Skipped, Success}
 import mill.define.ExternalModule
 import mill.eval.Evaluator
 
@@ -94,11 +90,11 @@ object AliasesModule extends ExternalModule {
                 Result.Failure(s"Alias '$aliasName' not found.")
             case Some(alias) =>
                 checkAliasTasks(ev, alias) match {
-                    case Success(_) =>
+                    case Result.Success(_) =>
                         val runTasks = alias.tasks.flatMap(x => Seq(x, "+")).flatMap(_.split("\\s+")).init
                         Console.out.println(s"Running alias $aliasName")
                         aliasRunner(ev, runTasks) match {
-                            case Success(value) =>
+                            case Result.Success(value) =>
                                 Result.Success(s"Alias $aliasName finished successfully")
                             case Result.Failure(msg, value) =>
                                 Result.Failure(msg)
