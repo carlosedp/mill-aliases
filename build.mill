@@ -28,6 +28,7 @@ trait Plugin  extends Cross.Module[String]
     val millVersion  = crossValue
     def scalaVersion = versions.scala213
     def artifactName = s"${versions.pluginName}_mill${scalaNativeBinaryVersion(millVersion)}"
+    override def scalacOptions = Seq("-Ywarn-unused", "-deprecation")
 
     def compileIvyDeps = super.compileIvyDeps() ++ Agg(
         ivy"com.lihaoyi::mill-scalalib:${millVersion}",

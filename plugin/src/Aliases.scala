@@ -186,6 +186,7 @@ object AliasesModule extends ExternalModule {
                     "millOuterCtx",
                     "cachedTarget",
                     "$anonfun$millSourcePath$1",
+                    "mill$define$Cacher$$cacherLazyMap",
                 ).contains(_)
             ).toSeq
 
@@ -198,7 +199,13 @@ object AliasesModule extends ExternalModule {
      *   A `Seq` of tasks
      */
     private def aliasCommands(module: Module, alias: String): Seq[String] =
-        module.getClass().getDeclaredMethod(alias).invoke(module).asInstanceOf[Seq[String]]
+        module.getClass().getDeclaredMethods().flatMap { m =>
+            if (m.getName() == alias) {
+                m.invoke(module).asInstanceOf[Seq[String]]
+            } else {
+                Seq.empty
+            }
+        }
 
     /**
      * Get all aliases in the project
