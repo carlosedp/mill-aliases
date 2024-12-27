@@ -9,7 +9,7 @@ This is a Scala [Mill](http://mill-build.com/) plugin adding the task alias capa
 First import the plugin into your `build.sc` / `build.mill` using the latest published version, by adding:
 
 ```scala
-import $ivy.`com.carlosedp::mill-aliases::0.5.0`  //ReleaseVerMill
+import $ivy.`com.carlosedp::mill-aliases::0.6.0`  //ReleaseVerMill
 import com.carlosedp.aliases._
 ```
 
