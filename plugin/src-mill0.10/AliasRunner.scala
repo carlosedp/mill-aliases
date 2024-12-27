@@ -1,6 +1,5 @@
 package com.carlosedp.aliases
 
-import com.carlosedp.aliases.Discover._
 import mill._
 import mill.api.Result
 import mill.api.Result.{Aborted, Failure, Skipped, Success}

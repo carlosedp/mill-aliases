@@ -8,7 +8,7 @@ import $ivy.`com.carlosedp::mill-aliases::0.5.0`
 import com.carlosedp.aliases._
 import $ivy.`com.goyeau::mill-scalafix::0.4.2`
 import com.goyeau.mill.scalafix.ScalafixModule
-import $ivy.`io.chris-kipp::mill-ci-release::0.2.0`
+import $ivy.`io.chris-kipp::mill-ci-release::0.1.10`
 import io.kipp.mill.ci.release._
 import de.tobiasroeser.mill.vcs.version.VcsVersion
 
@@ -25,9 +25,9 @@ trait Plugin  extends Cross.Module[String]
     with ScalafixModule
     with ScalafmtModule {
 
-    val millVersion  = crossValue
-    def scalaVersion = versions.scala213
-    def artifactName = s"${versions.pluginName}_mill${scalaNativeBinaryVersion(millVersion)}"
+    val millVersion            = crossValue
+    def scalaVersion           = versions.scala213
+    def artifactName           = s"${versions.pluginName}_mill${scalaNativeBinaryVersion(millVersion)}"
     override def scalacOptions = Seq("-Ywarn-unused", "-deprecation")
 
     def compileIvyDeps = super.compileIvyDeps() ++ Agg(
