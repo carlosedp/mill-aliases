@@ -14,7 +14,7 @@ import de.tobiasroeser.mill.vcs.version.VcsVersion
 
 object versions {
     val pluginName   = "mill-aliases"
-    val millVersions = Seq("0.10.12", "0.11.0") // scala-steward:off
+    val millVersions = Seq("0.10.12", "0.11.0", "0.12.4") // scala-steward:off
     val scala213     = "2.13.15"
 }
 

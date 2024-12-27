@@ -37,10 +37,7 @@ private case class Alias(
  *
  * This module is used to list and run aliases
  */
-object AliasesModule extends ExternalModule {
-
-    lazy val millDiscover: mill.define.Discover[this.type] =
-        mill.define.Discover[this.type]
+object AliasesModule extends ExternalModule with MillDiscover {
 
     /**
      * List all aliases

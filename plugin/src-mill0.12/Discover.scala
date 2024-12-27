@@ -5,7 +5,7 @@ import mill.eval.Evaluator
 import mill._
 
 trait MillDiscover extends Module {
-    lazy val millDiscover: mill.define.Discover[this.type] =
+    lazy val millDiscover: mill.define.Discover =
         mill.define.Discover[this.type]
 }
 
