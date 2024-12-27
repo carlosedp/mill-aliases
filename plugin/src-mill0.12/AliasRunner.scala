@@ -5,6 +5,7 @@ import mill.api.Result
 import mill.define.ExternalModule
 
 private[aliases] object AliasRunner extends ExternalModule with MillDiscover {
+
     def aliasRunner(ev: eval.Evaluator, aliases: Seq[String]) =
         mill.main.RunScript.evaluateTasksNamed(
             ev.withFailFast(false),
