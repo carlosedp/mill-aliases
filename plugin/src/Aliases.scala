@@ -3,7 +3,6 @@ package com.carlosedp.aliases
 import com.carlosedp.aliases.AliasRunner._
 import mill._
 import mill.api.Result
-import mill.define.ExternalModule
 import mill.eval.Evaluator
 
 /**
@@ -37,7 +36,7 @@ private case class Alias(
  *
  * This module is used to list and run aliases
  */
-object AliasesModule extends ExternalModule with MillDiscover {
+object AliasesModule {
 
     /**
      * List all aliases
@@ -60,7 +59,7 @@ object AliasesModule extends ExternalModule with MillDiscover {
 
         getAllAliases(ev).sortBy(_.name).foreach(x =>
             Console.out.println(
-                s"| ${x.name.padTo(15, ' ')} | ${x.module.toString.padTo(15, ' ')} | (${x.tasks.mkString(", ")})"
+                s"| ${x.name.padTo(15, ' ')} | ${x.module.toString.padTo(15, ' ')} | ${x.tasks.mkString(", ")}"
             )
         )
         Console.out.println(

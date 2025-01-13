@@ -3,10 +3,9 @@ package com.carlosedp.aliases
 import mill._
 import mill.api.Result
 import mill.api.Result.{Aborted, Exception, Failure, Skipped, Success}
-import mill.define.ExternalModule
 import mill.util.Watched
 
-private[aliases] object AliasRunner extends ExternalModule with MillDiscover {
+private[aliases] object AliasRunner {
 
     def aliasRunner(ev: eval.Evaluator, aliases: Seq[String]): Result[Watched[Unit]] =
         mill.main.MainModule.evaluateTasks(

@@ -5,8 +5,15 @@ import mainargs.arg
 import mill._
 import mill.define.ExternalModule
 import mill.eval.Evaluator
+import mill.main.EvaluatorScopt
 
-object Alias extends ExternalModule with MillDiscover {
+object Alias extends ExternalModule {
+    implicit def millScoptEvaluatorReads[A]: EvaluatorScopt[A] =
+        new EvaluatorScopt[A]()
+
+    lazy val millDiscover: mill.define.Discover[this.type] =
+        mill.define.Discover[this.type]
+
     def run(ev: Evaluator, @arg(positional = true) alias: String) = T.command {
         AliasesModule.run(ev, alias)
     }
