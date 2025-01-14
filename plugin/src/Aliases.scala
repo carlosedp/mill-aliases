@@ -228,7 +228,7 @@ object AliasesModule extends ExternalModule {
      * @param name
      *   Alias name
      * @param aliases
-     *   A `Seq` of `[[Alias]]`es
+     *   A `Seq` of `[[Alias]]` es
      * @return
      */
     private def findAliasByName(name: String, aliases: Seq[Alias]): Option[Alias] =
