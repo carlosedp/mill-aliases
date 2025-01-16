@@ -15,7 +15,7 @@ import de.tobiasroeser.mill.vcs.version.VcsVersion
 object versions {
     val pluginName   = "mill-aliases"
     val millVersions = Seq("0.10.12", "0.11.0") // scala-steward:off
-    val scala213     = "2.13.15"
+    val scala213     = "2.13.16"
 }
 
 object plugin extends Cross[Plugin](versions.millVersions)
