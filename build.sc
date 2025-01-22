@@ -4,11 +4,11 @@ import mill.scalalib.scalafmt._
 import mill.scalalib.publish._
 import mill.scalalib.api.ZincWorkerUtil._
 
-import $ivy.`com.carlosedp::mill-aliases::0.5.0`
+import $ivy.`com.carlosedp::mill-aliases::0.6.0`
 import com.carlosedp.aliases._
-import $ivy.`com.goyeau::mill-scalafix::0.4.2`
+import $ivy.`com.goyeau::mill-scalafix::0.5.0`
 import com.goyeau.mill.scalafix.ScalafixModule
-import $ivy.`io.chris-kipp::mill-ci-release::0.1.10`
+import $ivy.`io.chris-kipp::mill-ci-release_mill0.12:0.3.0`
 import io.kipp.mill.ci.release._
 import de.tobiasroeser.mill.vcs.version.VcsVersion
 
@@ -57,18 +57,9 @@ trait Publish extends CiReleaseModule {
             )
         ),
     )
-    override def publishVersion: T[String] = T {
-        val isTag = T.ctx().env.get("GITHUB_REF").exists(_.startsWith("refs/tags"))
-        val state = VcsVersion.vcsState()
-        if (state.commitsSinceLastTag == 0 && isTag) {
-            state.stripV(state.lastTag.get)
-        } else {
-            val v = if (state.lastTag.isEmpty) { Array("0", "0", "0") }
-            else { state.stripV(state.lastTag.get).split('.') }
-            s"${v(0)}.${(v(1).toInt) + 1}-SNAPSHOT"
-        }
-    }
-    def sonatypeHost = Some(SonatypeHost.s01)
+
+    override def flatSnapshot = true
+    override def sonatypeHost = Some(SonatypeHost.s01)
 }
 
 object MyAliases extends Aliases {
