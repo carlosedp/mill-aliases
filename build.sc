@@ -4,7 +4,7 @@ import mill.scalalib.scalafmt._
 import mill.scalalib.publish._
 import mill.scalalib.api.ZincWorkerUtil._
 
-import $ivy.`com.carlosedp::mill-aliases::0.5.0`
+import $ivy.`com.carlosedp::mill-aliases::0.6.0`
 import com.carlosedp.aliases._
 import $ivy.`com.goyeau::mill-scalafix::0.5.1`
 import com.goyeau.mill.scalafix.ScalafixModule
