@@ -3,7 +3,6 @@ package com.carlosedp.aliases
 import com.carlosedp.aliases.AliasRunner._
 import mill._
 import mill.api.Result
-import mill.define.ExternalModule
 import mill.eval.Evaluator
 
 /**
@@ -37,10 +36,7 @@ private case class Alias(
  *
  * This module is used to list and run aliases
  */
-object AliasesModule extends ExternalModule {
-
-    lazy val millDiscover: mill.define.Discover[this.type] =
-        mill.define.Discover[this.type]
+object AliasesModule {
 
     /**
      * List all aliases
@@ -63,7 +59,7 @@ object AliasesModule extends ExternalModule {
 
         getAllAliases(ev).sortBy(_.name).foreach(x =>
             Console.out.println(
-                s"| ${x.name.padTo(15, ' ')} | ${x.module.toString.padTo(15, ' ')} | (${x.tasks.mkString(", ")})"
+                s"| ${x.name.padTo(15, ' ')} | ${x.module.toString.padTo(15, ' ')} | ${x.tasks.mkString(", ")}"
             )
         )
         Console.out.println(
@@ -194,10 +190,17 @@ object AliasesModule extends ExternalModule {
      * @return
      *   A `Seq` of tasks
      */
-    private def aliasCommands(module: Module, alias: String): Seq[String] =
+    private def aliasCommands(module: Module, alias: String) =
         module.getClass().getDeclaredMethods().toIndexedSeq.flatMap { m =>
             if (m.getName() == alias) {
-                m.invoke(module).asInstanceOf[Seq[String]]
+                m.invoke(module) match {
+                    case tasks: Seq[?] =>
+                        tasks.map(_.toString)
+                    case task: String =>
+                        Seq(task)
+                    case _ =>
+                        Seq.empty
+                }
             } else {
                 Seq.empty
             }

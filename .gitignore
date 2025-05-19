@@ -1,4 +1,4 @@
 out/
 .bloop/
 .metals/
-.vscode/
+mill.*
