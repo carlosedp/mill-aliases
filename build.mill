@@ -38,7 +38,7 @@ trait Plugin  extends Cross.Module[String]
 
     def sources = T.sources {
         super.sources() ++ Seq(
-            millSourcePath / s"src-mill${scalaNativeBinaryVersion(millVersion)}"
+            moduleDir / s"src-mill${scalaNativeBinaryVersion(millVersion)}"
         ).map(PathRef(_))
     }
 }
