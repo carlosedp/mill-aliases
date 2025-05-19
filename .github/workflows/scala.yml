@@ -30,7 +30,6 @@ jobs:
           java-version: ${{ matrix.jvm }}
           version: "latest"
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          components: "native-image"
 
       - name: Cache packages
         uses: coursier/cache-action@v6
@@ -86,14 +85,13 @@ jobs:
           java-version: "17"
           version: "latest"
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          components: "native-image"
 
       - name: Cache packages
         uses: coursier/cache-action@v6
         id: coursier-cache
 
       - name: Publish
-        run: ./mill mill.scalalib.SonatypePublishModule
+        run: ./mill mill.scalalib.SonatypeCentralPublishModule/
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
@@ -119,14 +117,13 @@ jobs:
           java-version: "17"
           version: "latest"
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          components: "native-image"
 
       - name: Cache packages
         uses: coursier/cache-action@v6
         id: coursier-cache
 
       - name: Publish
-        run: ./mill mill.scalalib.SonatypePublishModule
+        run: ./mill mill.scalalib.SonatypeCentralPublishModule/
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}

@@ -76,7 +76,7 @@ object MyAliases extends Aliases {
     def checkfmt = alias("mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources")
     def lint     = alias("mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources", "__.fix")
     def deps     = alias("mill.scalalib.Dependency/showUpdates")
-    def pub      = alias("mill.scalalib.SonatypePublishModule")
+    def pub      = alias("mill.scalalib.SonatypeCentralPublishModule/")
     def publocal = alias("__.publishLocal")
     def testall  = alias("__.test")
 }
