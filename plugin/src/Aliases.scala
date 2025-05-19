@@ -190,10 +190,17 @@ object AliasesModule {
      * @return
      *   A `Seq` of tasks
      */
-    private def aliasCommands(module: Module, alias: String): Seq[String] =
+    private def aliasCommands(module: Module, alias: String) =
         module.getClass().getDeclaredMethods().toIndexedSeq.flatMap { m =>
             if (m.getName() == alias) {
-                m.invoke(module).asInstanceOf[Seq[String]]
+                m.invoke(module) match {
+                    case tasks: Seq[?] =>
+                        tasks.map(_.toString)
+                    case task: String =>
+                        Seq(task)
+                    case _ =>
+                        Seq.empty
+                }
             } else {
                 Seq.empty
             }
