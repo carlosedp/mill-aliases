@@ -93,7 +93,7 @@ jobs:
         id: coursier-cache
 
       - name: Publish
-        run: ./mill io.kipp.mill.ci.release.ReleaseModule/publishAll
+        run: ./mill mill.scalalib.SonatypePublishModule
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
@@ -126,7 +126,7 @@ jobs:
         id: coursier-cache
 
       - name: Publish
-        run: ./mill io.kipp.mill.ci.release.ReleaseModule/publishAll
+        run: ./mill mill.scalalib.SonatypePublishModule
         env:
           SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
           SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
