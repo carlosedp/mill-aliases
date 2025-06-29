@@ -13,7 +13,7 @@ private object Utils {
         )
 
         resolved match {
-            case Left(err) => Result.Failure(err)
+            case Left(err)                   => Result.Failure(err)
             case Right(resolvedSegmentsList) =>
                 val resolvedStrings = resolvedSegmentsList.map(_.render)
                 // resolvedStrings.sorted.foreach(Console.out.println) // Print all resolved tasks
