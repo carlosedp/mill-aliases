@@ -1,25 +1,36 @@
 # mill-aliases
 
-![Maven Central](https://img.shields.io/maven-central/v/com.carlosedp/mill-aliases_mill0.11_2.13)
+![Mill 0.x](https://img.shields.io/maven-central/v/com.carlosedp/mill-aliases_mill0.11_2.13)
+![Mill 1.0](https://img.shields.io/maven-central/v/com.carlosedp/mill-aliases_mill1_3)
 
-This is a Scala [Mill](http://mill-build.com/) plugin adding the task alias capability to the build tool. Supports Mill 0.10 and 0.11 series.
+This is a Scala [Mill](http://mill-build.com/) plugin adding the task alias capability to the build tool. Supports Mill 0.10 and 0.11, 0.12 and 1.0 series.
 
 ## Getting Started
 
-First import the plugin into your `build.sc` / `build.mill` using the latest published version, by adding:
+To use the plugin on Mill 0.x series, add the following to your `build.sc` / `build.mill`:
 
 ```scala
-import $ivy.`com.carlosedp::mill-aliases::0.7.0`  //ReleaseVerMill
+import $ivy.`com.carlosedp::mill-aliases::0.7.0`
 import com.carlosedp.aliases._
 ```
+
+To use the plugin on Mill 1.0 series, add the following to your `build.mill`:
+
+```scala
+//| mill-version: 1.0.1
+//| mvnDeps:
+//| - com.carlosedp::mill-aliases::1.0.0        //ReleaseVerMill
+
+import com.carlosedp.aliases.*
+```
+
+The latest version for series 0.x is 0.7.0. To use the latest functionalities, please use the 1.0 series which is currently at version 1.0.0. There is full functionality parity between version 0.7.0 and 1.0.0. New features will be added to the 1.0 series only.
 
 To define your project aliases, create an object extending the `Aliases` trait containing one method per required alias. Aliases are global to your project (whether single or multi-module) and are defined at the root level of your build file.
 
 Aliases can be single string tasks or a sequence of strings containing multiple tasks pointing to your module's tasks and are defined using the `alias` type in your `build.sc` / `build.mill`, eg:
 
 ```scala
-import mill._, scalalib._
-
 object mymodule extends ScalaModule {
   ... // Your module here
 }

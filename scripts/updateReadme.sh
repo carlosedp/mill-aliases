@@ -2,7 +2,7 @@
 
 GROUPID=com.carlosedp
 ARTIFACT=mill-aliases
-MILLVER=mill0.10_2.13
+MILLVER=mill1_3
 
 REPO=$(echo ${GROUPID} | sed "s/\./\//g")/${ARTIFACT}
 

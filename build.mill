@@ -1,82 +1,84 @@
+//| mill-version: 1.0.1
+//| repositories:
+//| - https://central.sonatype.com/repository/maven-snapshots
+//| - https://oss.sonatype.org/content/repositories/snapshots
+//| mvnDeps:
+//| - com.carlosedp::mill-aliases::0.8.0-SNAPSHOT
+//| - com.goyeau::mill-scalafix::0.6.0
+//| - org.typelevel::scalac-options:0.1.7
+
 package build
 
-import mill._
-import mill.scalalib._
-import mill.scalalib.scalafmt._
-import mill.scalalib.publish._
-import mill.scalalib.api.JvmWorkerUtil._
+import mill.*
+import mill.scalalib.*
+import mill.scalalib.scalafmt.*
+import mill.scalalib.publish.*
 
-import $ivy.`com.carlosedp::mill-aliases::0.6.0`
-import com.carlosedp.aliases._
-import $ivy.`com.goyeau::mill-scalafix::0.5.1`
+import com.carlosedp.aliases.*
 import com.goyeau.mill.scalafix.ScalafixModule
-import $ivy.`de.tototec::de.tobiasroeser.mill.vcs.version::0.4.1`
-import de.tobiasroeser.mill.vcs.version.VcsVersion
+import org.typelevel.scalacoptions.*
+import mill.api.Task.Simple
 
-object versions {
-    val pluginName   = "mill-aliases"
-    val millVersions = Seq("0.10.12", "0.11.0", "0.12.0") // scala-steward:off
-    val scala213     = "2.13.16"
-}
+object versions:
+  val pluginName   = "mill-aliases"
+  val millVersions = Seq("1.0.0") // scala-steward:off
+  val scala3       = "3.7.1"
+
+def millBinaryVersion(millVersion: String) = millVersion.split('.').head
 
 object plugin extends Cross[Plugin](versions.millVersions)
-trait Plugin  extends Cross.Module[String]
+
+trait Plugin extends Cross.Module[String]
     with ScalaModule
     with Publish
     with ScalafixModule
-    with ScalafmtModule {
+    with ScalafmtModule:
 
-    val millVersion            = crossValue
-    def scalaVersion           = versions.scala213
-    def artifactName           = s"${versions.pluginName}_mill${scalaNativeBinaryVersion(millVersion)}"
-    override def scalacOptions = Seq("-Ywarn-unused", "-deprecation")
+  val millVersion  = crossValue
+  def scalaVersion = versions.scala3
+  def artifactName = s"${versions.pluginName}_mill${millBinaryVersion(millVersion)}"
 
-    def compileIvyDeps = super.compileIvyDeps() ++ Agg(
-        ivy"com.lihaoyi::mill-scalalib:${millVersion}",
-        ivy"org.scala-lang:scala-reflect:${scalaVersion()}",
-    )
+  def compileMvnDeps = super.compileMvnDeps() ++ Seq(
+    mvn"com.lihaoyi::mill-libs:${millVersion}"
+  )
+  def scalacOptions = Task:
+    super.scalacOptions() ++
+      ScalacOptions.defaultTokensForVersion(ScalaVersion.unsafeFromString(scalaVersion()))
+end Plugin
 
-    def sources = T.sources {
-        super.sources() ++ Seq(
-            moduleDir / s"src-mill${scalaNativeBinaryVersion(millVersion)}"
-        ).map(PathRef(_))
-    }
-}
+trait Publish extends SonatypeCentralPublishModule:
+  override def pomSettings = PomSettings(
+    description = "A Mill plugin to allow the creation of aliases to common-use tasks.",
+    organization = "com.carlosedp",
+    url = "https://github.com/carlosedp/mill-aliases",
+    licenses = Seq(License.MIT),
+    versionControl = VersionControl.github(owner = "carlosedp", repo = "mill-aliases"),
+    developers = Seq(
+      Developer(
+        "carlosedp",
+        "Carlos Eduardo de Paula",
+        "https://github.com/carlosedp",
+      )
+    ),
+  )
 
-trait Publish extends SonatypeCentralPublishModule {
-    def pomSettings = PomSettings(
-        description = "A Mill plugin to allow the creation of aliases to common-use tasks.",
-        organization = "com.carlosedp",
-        url = "https://github.com/carlosedp/mill-aliases",
-        licenses = Seq(License.MIT),
-        versionControl = VersionControl.github(owner = "carlosedp", repo = "mill-aliases"),
-        developers = Seq(
-            Developer(
-                "carlosedp",
-                "Carlos Eduardo de Paula",
-                "https://github.com/carlosedp",
-            )
-        ),
-    )
-    override def publishVersion: T[String] = T {
-        val isTag = T.ctx().env.get("GITHUB_REF").exists(_.startsWith("refs/tags"))
-        val state = VcsVersion.vcsState()
-        if (state.commitsSinceLastTag == 0 && isTag) {
-            state.stripV(state.lastTag.get)
-        } else {
-            val v = if (state.lastTag.isEmpty) { Array("0", "0", "0") }
-            else { state.stripV(state.lastTag.get).split('.') }
-            s"${v(0)}.${(v(1).toInt) + 1}-SNAPSHOT"
-        }
-    }
-}
+  def publishVersion: Simple[String] = Task {
+    val isTag      = Task.env.get("GITHUB_REF").exists(_.startsWith("refs/tags"))
+    val currentTag = os.proc("git", "describe", "--tags", "--abbrev=0").call().out.trim()
+    val commits    = os.proc("git", "rev-list", "--count", s"$currentTag..HEAD").call().out.trim().toInt
+    if isTag && commits == 0 then currentTag.stripPrefix("v")
+    else
+      val Array(major, minor, patch) = currentTag.stripPrefix("v").split('.').map(_.toInt)
+      s"$major.${minor + 1}.$patch-SNAPSHOT"
+  }
 
-object MyAliases extends Aliases {
-    def fmt      = alias("mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources")
-    def checkfmt = alias("mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources")
-    def lint     = alias("mill.scalalib.scalafmt.ScalafmtModule/reformatAll __.sources", "__.fix")
-    def deps     = alias("mill.scalalib.Dependency/showUpdates")
-    def pub      = alias("mill.scalalib.SonatypeCentralPublishModule/")
-    def publocal = alias("__.publishLocal")
-    def testall  = alias("__.test")
-}
+end Publish
+
+object MyAliases extends Aliases:
+  def fmt      = alias("mill.scalalib.scalafmt/ __.sources")
+  def checkfmt = alias("mill.scalalib.scalafmt/checkFormatAll __.sources")
+  def lint     = alias("mill.scalalib.scalafmt/ __.sources", "__.fix")
+  def deps     = alias("mill.scalalib.Dependency/showUpdates")
+  def pub      = alias("mill.scalalib.SonatypeCentralPublishModule/")
+  def publocal = alias("__.publishLocal")
+  def testall  = alias("__.test")
