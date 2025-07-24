@@ -81,8 +81,7 @@ object MyAliases extends Aliases:
   def deps     = alias("mill.scalalib.Dependency/showUpdates")
   def pub      = alias("mill.scalalib.SonatypeCentralPublishModule/")
   def publocal = alias("__.publishLocal")
-  def testall  = alias("__.test")
 
   // Test aliases that reference other aliases
   def fmtAndCheck = alias("fmt", "checkfmt")
-  def fullPrep    = alias("fmt", "lint", "testall")
+  def fullPrep    = alias("fmt", "lint", "__.compile")

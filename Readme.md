@@ -41,9 +41,9 @@ object MyAliases extends Aliases {
   def lint        = alias("mill.scalalib.scalafmt/ __.sources", "__.fix")
   def testall     = alias("__.test")
 
-  // Aliases that reference other aliases
+  // Aliases that reference other aliases and/or tasks
   def fmtAndCheck = alias("fmt", "checkfmt")
-  def fullPrep    = alias("fmt", "lint", "testall")
+  def fullPrep    = alias("fmt", "lint", "__.test")
 }
 ```
 
@@ -55,7 +55,7 @@ If you use Zsh as shell and/or P10k as a theme, check my Zsh Mill completions pl
 
 **To show all the defined aliases:**
 
-When listing aliases, tasks that reference other aliases are marked with an asterisk (`*`):
+When listing aliases, tasks that reference other aliases are marked with an arrow (`→`):
 
 ```sh
 ./mill Alias/list
@@ -65,18 +65,21 @@ Output:
 
 ```sh
 Available aliases:
-┌─────────────────┬─────────────────┬───────────────────────────────────────────────────────────────────────────────────
-| Alias           | Module          | Command(s)
-├─────────────────┼─────────────────┼───────────────────────────────────────────────────────────────────────────────────
-| checkfmt        | MyAliases       | mill.scalalib.scalafmt/checkFormatAll __.sources
-| fmt             | MyAliases       | mill.scalalib.scalafmt/ __.sources
-| fmtAndCheck     | MyAliases       | fmt*, checkfmt*
-| fullPrep        | MyAliases       | fmt*, lint*, testall*
-| lint            | MyAliases       | mill.scalalib.scalafmt/ __.sources, __.fix
-| testall         | MyAliases       | __.test
-└─────────────────┴─────────────────┴───────────────────────────────────────────────────────────────────────────────────
 
-Note: Tasks marked with '*' are references to other aliases.
+┌───────────────┬───────────────┬────────────────────────────────────────────────────────────┐
+│ Alias         │ Module        │ Command(s)                                                 │
+├───────────────┼───────────────┼────────────────────────────────────────────────────────────┤
+│ checkfmt      │ MyAliases     │ mill.scalalib.scalafmt/checkFormatAll __.sources          │
+│ fmt           │ MyAliases     │ mill.scalalib.scalafmt/ __.sources                         │
+│ fmtAndCheck   │ MyAliases     │ fmt→, checkfmt→                                            │
+│ fullPrep      │ MyAliases     │ fmt→, lint→, testall→                                      │
+│ lint          │ MyAliases     │ mill.scalalib.scalafmt/ __.sources, __.fix                │
+│ testall       │ MyAliases     │ __.test                                                    │
+└───────────────┴───────────────┴────────────────────────────────────────────────────────────┘
+
+Legend:
+  Colored tasks→ Reference other aliases
+  Green names     Alias names
 ```
 
 **Run an alias:**
