@@ -51,7 +51,8 @@ trait Plugin extends Cross.Module[String]
     def forkEnv = Task:
       Map(
         "MILL_EXECUTABLE_PATH" -> millExecutable.assembly().path.toString,
-        "MILL_USER_TEST_REPO"  -> publishLocalTestRepo().path.toString,
+        "MILL_USER_TEST_REPO"  -> s"file://${publishLocalTestRepo().path.toString}",
+        "TEST_PLUGIN_VERSION"  -> publishVersion().toString,
       )
     object millExecutable extends JavaModule:
       def mvnDeps   = Seq(mvn"com.lihaoyi:mill-runner-launcher_3:$millVersion")

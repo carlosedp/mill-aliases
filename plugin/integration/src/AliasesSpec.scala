@@ -10,8 +10,18 @@ object AliasesSpec extends TestSuite:
     workspaceSourcePath = resourceFolder,
     millExecutable = os.Path(sys.env("MILL_EXECUTABLE_PATH")),
   )
+  val pluginVersion = sys.env.getOrElse("TEST_PLUGIN_VERSION", "0.0.0-SNAPSHOT")
+  val testRepo      = sys.env.getOrElse("MILL_USER_TEST_REPO", "/tmp")
+  println("Running tests in dir: " + tester.workspacePath)
+  println(s"Using plugin version: $pluginVersion")
+  println(s"Test plugin published to repo: $testRepo")
+  // Replace plugin version and repo with the one from the test environment
+  tester.modifyFile(tester.workspacePath / "build.mill", _.replace("PLUGIN_VERSION", pluginVersion))
+  tester.modifyFile(tester.workspacePath / "build.mill", _.replace("LOCAL_REPO_PATH", testRepo))
+
+  // Run the tests
   val tests: Tests = Tests:
-    println("initializing integration tests")
+    println("Initializing integration tests")
 
     test("print help"):
       val res = tester.eval("Alias/help")

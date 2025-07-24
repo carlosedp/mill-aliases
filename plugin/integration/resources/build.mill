@@ -1,6 +1,7 @@
 //| mill-version: 1.0.0
+//| repositories: [LOCAL_REPO_PATH]
 //| mvnDeps:
-//| - com.carlosedp::mill-aliases::1.1.0-SNAPSHOT
+//| - com.carlosedp::mill-aliases::PLUGIN_VERSION
 
 package build
 import mill.*, scalalib.*
