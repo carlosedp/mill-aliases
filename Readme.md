@@ -36,11 +36,18 @@ object mymodule extends ScalaModule {
 }
 
 object MyAliases extends Aliases {
+  def fmt         = alias("mill.scalalib.scalafmt/ __.sources")
+  def checkfmt    = alias("mill.scalalib.scalafmt/checkFormatAll __.sources")
+  def lint        = alias("mill.scalalib.scalafmt/ __.sources", "__.fix")
   def testall     = alias("__.test")
-  def compileall  = alias("__.compile")
-  def comptestall = alias("__.compile", "__.test")
+
+  // Aliases that reference other aliases
+  def fmtAndCheck = alias("fmt", "checkfmt")
+  def fullPrep    = alias("fmt", "lint", "testall")
 }
 ```
+
+Aliases can also reference other aliases, allowing you to create complex workflows by composing simpler ones. When an alias task matches the name of another alias, the plugin will automatically execute that alias instead of treating it as a mill task.
 
 If you use Zsh as shell and/or P10k as a theme, check my Zsh Mill completions plugin at <https://github.com/carlosedp/mill-zsh-completions>. It supports getting Mill tasks and aliases.
 
@@ -48,23 +55,28 @@ If you use Zsh as shell and/or P10k as a theme, check my Zsh Mill completions pl
 
 **To show all the defined aliases:**
 
+When listing aliases, tasks that reference other aliases are marked with an asterisk (`*`):
+
 ```sh
 ./mill Alias/list
 ```
 
-Which will show (eg.):
+Output:
 
 ```sh
-Use './mill run [alias]'.
 Available aliases:
 ┌─────────────────┬─────────────────┬───────────────────────────────────────────────────────────────────────────────────
 | Alias           | Module          | Command(s)
 ├─────────────────┼─────────────────┼───────────────────────────────────────────────────────────────────────────────────
-| compall         | MyAliases       | (__.compile)
-| comptestall     | MyAliases       | (__.compile, __.test)
-| testall         | MyAliases       | (__.test)
-| deps            | MyAliases       | (mill.scalalib.Dependency/showUpdates)
+| checkfmt        | MyAliases       | mill.scalalib.scalafmt/checkFormatAll __.sources
+| fmt             | MyAliases       | mill.scalalib.scalafmt/ __.sources
+| fmtAndCheck     | MyAliases       | fmt*, checkfmt*
+| fullPrep        | MyAliases       | fmt*, lint*, testall*
+| lint            | MyAliases       | mill.scalalib.scalafmt/ __.sources, __.fix
+| testall         | MyAliases       | __.test
 └─────────────────┴─────────────────┴───────────────────────────────────────────────────────────────────────────────────
+
+Note: Tasks marked with '*' are references to other aliases.
 ```
 
 **Run an alias:**
@@ -76,10 +88,11 @@ Available aliases:
 In this case, the task `__.test` will be run which is executing the test task for all your modules.
 
 ```sh
-./mill Alias/run comptestall
+./mill Alias/run fullPrep
 ```
 
-In this case, the task `__.compile` will be run first followed by `__.test` which will first compile all sources from all modules and then test all modules.
+In this case, the aliases `fmt`, `lint`, and `testall` will be run in sequence, executing the tasks defined in those aliases.
+
 
 **To show the help:**
 

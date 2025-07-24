@@ -3,7 +3,7 @@
 //| - https://central.sonatype.com/repository/maven-snapshots
 //| - https://oss.sonatype.org/content/repositories/snapshots
 //| mvnDeps:
-//| - com.carlosedp::mill-aliases::0.8.0-SNAPSHOT
+//| - com.carlosedp::mill-aliases::1.1.0-SNAPSHOT
 //| - com.goyeau::mill-scalafix::0.6.0
 //| - org.typelevel::scalac-options:0.1.7
 
@@ -82,3 +82,7 @@ object MyAliases extends Aliases:
   def pub      = alias("mill.scalalib.SonatypeCentralPublishModule/")
   def publocal = alias("__.publishLocal")
   def testall  = alias("__.test")
+
+  // Test aliases that reference other aliases
+  def fmtAndCheck = alias("fmt", "checkfmt")
+  def fullPrep    = alias("fmt", "lint", "testall")
