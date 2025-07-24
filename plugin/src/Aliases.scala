@@ -271,49 +271,43 @@ object AliasesModule {
    *   A `Seq` of aliases
    */
   private def aliasMethods(module: Module): Seq[String] =
-    val methods = module
-      .getClass()
-      .getMethods()
-      .map(_.getName())
-      .filterNot(
-        Seq(
-          "alias",
-          "wait",
-          "equals",
-          "toString",
-          "hashCode",
-          "getClass",
-          "notify",
-          "notifyAll",
-          "mill$define$Module$$millModuleDirectChildrenImpl",
-          "millModuleDirectChildren",
-          "millModuleExternal",
-          "millModuleShared",
-          "millInternal",
-          "millModuleSegments",
-          "millSourcePath",
-          "millModuleBasePath",
-          "mill$moduledefs$Cacher$$cacherLazyMap",
-          "millOuterCtx",
-          "cachedTarget",
-          "$anonfun$millSourcePath$1",
-          "mill$define$Cacher$$cacherLazyMap",
-          "build_$package_$MyAliases$$$$outer",
-          "mill$api$Module$_setter_$moduleLinearized_$eq",
-          "mill$api$Module$$millModuleDirectChildrenImpl",
-          "moduleNestedCtx",
-          "moduleDirectChildren",
-          "moduleLinearized",
-          "moduleDir",
-          "moduleSegments",
-          "moduleInternal",
-          "moduleDirJava",
-          "mill$api$internal$Cacher$$cacherLazyMap",
-          "moduleCtx",
-          "cachedTask",
-        ).contains(_)
-      ).toSeq
-    methods
+    // List of method names to exclude
+    val exclude = Set(
+      "alias",
+      "wait",
+      "equals",
+      "toString",
+      "hashCode",
+      "getClass",
+      "notify",
+      "notifyAll",
+      "millModuleDirectChildren",
+      "millModuleExternal",
+      "millModuleShared",
+      "millInternal",
+      "millModuleSegments",
+      "millSourcePath",
+      "millModuleBasePath",
+      "millOuterCtx",
+      "cachedTarget",
+      "$anonfun$millSourcePath$1",
+      "moduleNestedCtx",
+      "moduleDirectChildren",
+      "moduleLinearized",
+      "moduleDir",
+      "moduleSegments",
+      "moduleInternal",
+      "moduleDirJava",
+      "moduleCtx",
+      "cachedTask",
+    )
+    module.getClass.getMethods
+      .iterator
+      .map(_.getName)
+      .filterNot(_.matches("""build_\$package_\$.*\$\$\$\$outer"""))
+      .filterNot(_.matches("""mill\$.*"""))
+      .filterNot(exclude)
+      .toSeq
   end aliasMethods
 
   /**

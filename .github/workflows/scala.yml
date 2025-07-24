@@ -39,8 +39,8 @@ jobs:
         run: ./mill mill.scalalib.scalafmt.ScalafmtModule/checkFormatAll __.sources
         if: startsWith(matrix.jvm, '17')
 
-    # - name: Run tests for all versions
-    #   run: ./mill Alias/run testall
+      - name: Run tests for all versions
+        run: ./mill Alias/run testall
 
   # code-coverage:
   #   needs: [test]

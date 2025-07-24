@@ -1,0 +1,25 @@
+//| mill-version: 1.0.0
+//| mvnDeps:
+//| - com.carlosedp::mill-aliases::1.1.0-SNAPSHOT
+
+package build
+import mill.*, scalalib.*
+import mill.scalalib.scalafmt.*
+import com.carlosedp.aliases.*
+
+object foo extends ScalaModule with ScalafmtModule:
+  def scalaVersion = "3.7.1"
+
+object MyAliases extends Aliases:
+  def fmt      = alias("mill.scalalib.scalafmt/ __.sources")
+  def checkfmt = alias("mill.scalalib.scalafmt/checkFormatAll __.sources")
+  def lint     = alias("mill.scalalib.scalafmt/ __.sources", "__.fix")
+  def deps     = alias("mill.scalalib.Dependency/showUpdates")
+
+  // Test aliases that reference other aliases
+  def fmtDeps       = alias("fmt", "deps")
+  def lintComp      = alias("lint", "__.compile")
+  def circularAlias = alias("circularAlias")
+
+object Aliases2 extends Aliases:
+  def someAlias = alias("__.compile")

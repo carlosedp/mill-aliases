@@ -17,7 +17,6 @@ import mill.scalalib.publish.*
 import com.carlosedp.aliases.*
 import com.goyeau.mill.scalafix.ScalafixModule
 import org.typelevel.scalacoptions.*
-import mill.api.Task.Simple
 
 object versions:
   val pluginName   = "mill-aliases"
@@ -44,6 +43,20 @@ trait Plugin extends Cross.Module[String]
   def scalacOptions = Task:
     super.scalacOptions() ++
       ScalacOptions.defaultTokensForVersion(ScalaVersion.unsafeFromString(scalaVersion()))
+
+  object integration extends ScalaTests with TestModule.Utest:
+    def mvnDeps = Seq(
+      mvn"com.lihaoyi::mill-testkit:$millVersion"
+    )
+    def forkEnv = Task:
+      Map(
+        "MILL_EXECUTABLE_PATH" -> millExecutable.assembly().path.toString,
+        "MILL_USER_TEST_REPO"  -> publishLocalTestRepo().path.toString,
+      )
+    object millExecutable extends JavaModule:
+      def mvnDeps   = Seq(mvn"com.lihaoyi:mill-runner-launcher_3:$millVersion")
+      def mainClass = Some("mill.launcher.MillLauncherMain")
+
 end Plugin
 
 trait Publish extends SonatypeCentralPublishModule:
@@ -62,7 +75,7 @@ trait Publish extends SonatypeCentralPublishModule:
     ),
   )
 
-  def publishVersion: Simple[String] = Task {
+  def publishVersion = Task {
     val isTag      = Task.env.get("GITHUB_REF").exists(_.startsWith("refs/tags"))
     val currentTag = os.proc("git", "describe", "--tags", "--abbrev=0").call().out.trim()
     val commits    = os.proc("git", "rev-list", "--count", s"$currentTag..HEAD").call().out.trim().toInt
@@ -81,6 +94,7 @@ object MyAliases extends Aliases:
   def deps     = alias("mill.scalalib.Dependency/showUpdates")
   def pub      = alias("mill.scalalib.SonatypeCentralPublishModule/")
   def publocal = alias("__.publishLocal")
+  def testall  = alias("__.integration")
 
   // Test aliases that reference other aliases
   def fmtAndCheck = alias("fmt", "checkfmt")
