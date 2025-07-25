@@ -3,7 +3,7 @@
 ![Mill 0.x](https://img.shields.io/maven-central/v/com.carlosedp/mill-aliases_mill0.11_2.13)
 ![Mill 1.0](https://img.shields.io/maven-central/v/com.carlosedp/mill-aliases_mill1_3)
 
-This is a Scala [Mill](http://mill-build.com/) plugin adding the task alias capability to the build tool. Supports Mill 0.10 and 0.11, 0.12 and 1.0 series.
+This is a Scala [Mill](http://mill-build.com/) build tool plugin adding the task alias capabilities to the tool. The plugin supports Mill 0.10 and 0.11, 0.12 and 1.0 series.
 
 ## Getting Started
 
@@ -24,11 +24,11 @@ To use the plugin on Mill 1.0 series, add the following to your `build.mill`:
 import com.carlosedp.aliases.*
 ```
 
-The latest version for series 0.x is 0.7.0. To use the latest functionalities, please use the 1.0 series which is currently at version 1.0.0. There is full functionality parity between version 0.7.0 and 1.0.0. New features will be added to the 1.0 series only.
+The latest version of the plugin for Mill 0.x is 0.7.0. To use the latest features, please use Mill 1.0 series and the latest plugin version. There is functionality parity between version 0.7.0 and 1.0.0 but new features will be added to the plugin 1.0 series only.
 
 To define your project aliases, create an object extending the `Aliases` trait containing one method per required alias. Aliases are global to your project (whether single or multi-module) and are defined at the root level of your build file.
 
-Aliases can be single string tasks or a sequence of strings containing multiple tasks pointing to your module's tasks and are defined using the `alias` type in your `build.sc` / `build.mill`, eg:
+Aliases can be a series of strings that are Mill or other plugin tasks which are defined using the `alias` type in your `build.sc` / `build.mill`, eg:
 
 ```scala
 object mymodule extends ScalaModule {
@@ -47,13 +47,13 @@ object MyAliases extends Aliases {
 }
 ```
 
-Aliases can also reference other aliases, allowing you to create complex workflows by composing simpler ones. When an alias task matches the name of another alias, the plugin will automatically execute that alias instead of treating it as a mill task.
+Aliases can be single commands or commands with arguments. They also reference other aliases, allowing you to create complex workflows by composing simpler ones. When an alias task matches the name of another alias, the plugin will automatically execute that alias instead of treating it as a mill task.
 
 If you use Zsh as shell and/or P10k as a theme, check my Zsh Mill completions plugin at <https://github.com/carlosedp/mill-zsh-completions>. It supports getting Mill tasks and aliases.
 
 ## Usage
 
-**To show all the defined aliases:**
+**To list all the defined aliases:**
 
 When listing aliases, tasks that reference other aliases are marked with an arrow (`→`):
 
@@ -82,7 +82,7 @@ Legend:
   Green names     Alias names
 ```
 
-**Run an alias:**
+**Running an alias:**
 
 ```sh
 ./mill Alias/run testall
