@@ -17,6 +17,6 @@ echo "Latest library release: ${LASTRELEASE}"
 echo "Updating readme versions..."
 
 ## Update Release
-sed -i "s/ivy.*ReleaseVerMill/ivy.\`${GROUPID}::${ARTIFACT}::${LASTRELEASE}\`  \/\/ReleaseVerMill/" Readme.md
+sed -i -E "s|(//\| - com\.carlosedp::mill-aliases::)[0-9]+\.[0-9]+\.[0-9]+|\1${LASTRELEASE}|g" Readme.md
 
 echo "Finished"

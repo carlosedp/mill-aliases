@@ -15,8 +15,8 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Sleep for 20 minutes while repository metadata is updated
-        run: sleep 20m
+      - name: Sleep for 5 minutes while Maven Central is updated
+        run: sleep 5m
         shell: bash
 
       - name: Checkout

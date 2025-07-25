@@ -19,7 +19,7 @@ To use the plugin on Mill 1.0 series, add the following to your `build.mill`:
 ```scala
 //| mill-version: 1.0.1
 //| mvnDeps:
-//| - com.carlosedp::mill-aliases::1.0.0        //ReleaseVerMill
+//| - com.carlosedp::mill-aliases::1.1.0
 
 import com.carlosedp.aliases.*
 ```
