@@ -21,7 +21,7 @@ import org.typelevel.scalacoptions.*
 object versions:
   val pluginName   = "mill-aliases"
   val millVersions = Seq("1.0.0") // scala-steward:off
-  val scala3       = "3.7.1"
+  val scala3       = "3.7.4"
 
 def millBinaryVersion(millVersion: String) = millVersion.split('.').head
 
